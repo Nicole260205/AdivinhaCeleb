@@ -6,7 +6,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyArIoWO-mdebEm8VkKXLl0cAykzBgwAOQs",
   authDomain: "adivinhaceleb-react.firebaseapp.com",
   projectId: "adivinhaceleb-react",
-  storageBucket: "adivinhaceleb-react.firebasestorage.app",
+  storageBucket: "adivinhaceleb-react.firebasestorage.com",
   messagingSenderId: "395522725556",
   appId: "1:395522725556:web:b164f006dfa4678da869e1",
   measurementId: "G-91GFPZXGV8",

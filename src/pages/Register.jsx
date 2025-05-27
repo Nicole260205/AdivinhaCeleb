@@ -14,7 +14,7 @@ function Register() {
     e.preventDefault();
     try {
       await register(name, email, password, role);
-      navigate("/");
+      navigate("/home");
     } catch (err) {
       setError(err.message);
     }
@@ -50,8 +50,8 @@ function Register() {
 
         <label>Tipo de usuário:</label>
         <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="player">Jogador(a)</option>
-          <option value="judge">Juiz(a)</option>
+          <option value="player">Jogadora</option>
+          <option value="judge">Juiza</option>
         </select>
 
         <button type="submit">Registrar</button>

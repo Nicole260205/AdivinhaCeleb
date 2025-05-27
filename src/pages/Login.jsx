@@ -14,11 +14,8 @@ function Login() {
       const user = await login(email, password);
       const userData = await getUserData(user.uid);
 
-      if (userData.role === "judge") {
-        navigate("/admin");
-      } else {
-        navigate("/");
-      }
+      // Sempre redireciona para /home, independente do papel
+      navigate("/home");
     } catch (err) {
       setError(err.message);
     }
