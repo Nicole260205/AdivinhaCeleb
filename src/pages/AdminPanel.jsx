@@ -7,6 +7,8 @@ import {
 } from "../services/celebrity";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+
 
 function AdminPanel() {
   const { user } = useAuth();
@@ -64,6 +66,7 @@ function AdminPanel() {
 
   return (
     <div className="admin-container">
+      <Navbar />
       <h1>Painel do Juiz 👩‍⚖️</h1>
 
       <form onSubmit={handleSubmit} className="admin-form">

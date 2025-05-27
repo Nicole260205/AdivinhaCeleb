@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { fetchCelebrities } from "../services/celebrity";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+
 
 function Home() {
   const [celebrities, setCelebrities] = useState([]);
@@ -27,6 +29,7 @@ function Home() {
 
   return (
     <div className="home-container">
+      <Navbar />
       <h1>Celebridades Grávidas</h1>
       <div className="celebrity-list">
         {celebrities.map((celeb) => (

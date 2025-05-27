@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { fetchCelebrities } from "../services/celebrity";
 import { fetchUserGuess, submitGuess } from "../services/guess";
 import { useAuth } from "../contexts/AuthContext";
+import Navbar from "../components/Navbar";
+
 
 function Guess() {
   const { id } = useParams(); // id da celebridade
@@ -51,6 +53,7 @@ function Guess() {
 
   return (
     <div className="guess-container">
+      <Navbar />
       <h1>Palpite para {celebrity.name}</h1>
       <img src={celebrity.photo} alt={celebrity.name} className="celeb-img" />
 

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchRanking } from "../services/ranking";
+import Navbar from "../components/Navbar";
+
 
 function Ranking() {
   const [ranking, setRanking] = useState([]);
@@ -14,6 +16,7 @@ function Ranking() {
 
   return (
     <div className="ranking-container">
+      <Navbar />
       <h1>🏆 Ranking dos Palpites</h1>
 
       {ranking.length === 0 ? (
