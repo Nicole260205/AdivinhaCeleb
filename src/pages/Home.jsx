@@ -3,7 +3,6 @@ import { fetchCelebrities } from "../services/celebrity";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
-
 function Home() {
   const [celebrities, setCelebrities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,21 +31,24 @@ function Home() {
       <Navbar />
       <h1>Celebridades Grávidas</h1>
       <div className="celebrity-list">
-        {celebrities.map((celeb) => (
-          <div key={celeb.id} className="celebrity-card">
-            <img src={celeb.photo} alt={celeb.name} />
-            <h3>{celeb.name}</h3>
-            {celeb.gender ? (
-              <p className="gender-revealed">
-                Gênero: {celeb.gender === "male" ? "Menino" : "Menina"}
-              </p>
-            ) : (
-              <Link to={`/guess/${celeb.id}`}>
-                <button>Dar Palpite</button>
-              </Link>
-            )}
-          </div>
-        ))}
+        {celebrities
+          .slice()
+          .reverse()
+          .map((celeb) => (
+            <div key={celeb.id} className="celebrity-card">
+              <img src={celeb.photo} alt={celeb.name} />
+              <h3>{celeb.name}</h3>
+              {celeb.gender ? (
+                <p className="gender-revealed">
+                  Gênero: {celeb.gender === "male" ? "Menino" : "Menina"}
+                </p>
+              ) : (
+                <Link to={`/guess/${celeb.id}`}>
+                  <button>Dar Palpite</button>
+                </Link>
+              )}
+            </div>
+          ))}
       </div>
     </div>
   );
