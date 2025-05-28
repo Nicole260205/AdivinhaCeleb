@@ -12,6 +12,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
       await register(name, email, password, role);
       navigate("/home");
@@ -48,13 +49,14 @@ function Register() {
           required
         />
 
-        <label>Tipo de usuário:</label>
+        <label>Tipo de usuária:</label>
         <select value={role} onChange={(e) => setRole(e.target.value)}>
           <option value="player">Jogadora</option>
-          <option value="judge">Juiza</option>
+          <option value="judge">Juíza</option>
         </select>
 
         <button type="submit">Registrar</button>
+
         {error && <p className="error">{error}</p>}
       </form>
     </div>

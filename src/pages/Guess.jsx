@@ -5,32 +5,50 @@ import { fetchUserGuess, submitGuess } from "../services/guess";
 import { useAuth } from "../contexts/AuthContext";
 import Navbar from "../components/Navbar";
 
-
 function Guess() {
-  const { id } = useParams(); // id da celebridade
+  const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const [celebrity, setCelebrity] = useState(null);
   const [selected, setSelected] = useState("");
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     const loadData = async () => {
-      const celebs = await fetchCelebrities();
-      const found = celebs.find((c) => c.id === id);
-      setCelebrity(found);
+      try {
+        const celebs = await fetchCelebrities();
+        const found = celebs.find((c) => String(c.id) === String(id));
+        setCelebrity(found);
 
-      const existingGuess = await fetchUserGuess(user.uid, id);
-      if (existingGuess) {
-        setSelected(existingGuess.gender);
+        if (found) {
+          const existingGuess = await fetchUserGuess(user.uid, id);
+          if (existingGuess) {
+            setSelected(existingGuess.gender);
+            setMessage(
+              `Você já escolheu: ${
+                existingGuess.gender === "male" ? "Menino" : "Menina"
+              }`
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     loadData();
   }, [id, user.uid]);
+
+  const handleSelection = (e) => {
+    const choice = e.target.value;
+    setSelected(choice);
+    setMessage(`Você escolheu: ${choice === "male" ? "Menino" : "Menina"}`);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,17 +56,27 @@ function Guess() {
       alert("Selecione um gênero");
       return;
     }
-    await submitGuess(user.uid, id, selected);
-    alert("Palpite salvo!");
-    navigate("/");
+    try {
+      await submitGuess(user.uid, id, selected);
+      setSuccessMessage("Palpite salvo com sucesso! 🎉");
+      setMessage(`Você escolheu: ${selected === "male" ? "Menino" : "Menina"}`);
+
+      // Navega para home após 3 segundos
+      setTimeout(() => {
+        setSuccessMessage("");
+        navigate("/");
+      }, 3000);
+    } catch (error) {
+      alert("Erro ao salvar palpite. Tente novamente.");
+    }
   };
 
   if (loading) {
-    return <p className="loading">Carregando...</p>;
+    return <p className="loading">Carregando...</p>
   }
 
   if (!celebrity) {
-    return <p>Celebridade não encontrada.</p>;
+    return <p>Celebridade não encontrada.</p>
   }
 
   return (
@@ -65,7 +93,7 @@ function Guess() {
               name="gender"
               value="male"
               checked={selected === "male"}
-              onChange={(e) => setSelected(e.target.value)}
+              onChange={handleSelection}
             />
             Menino
           </label>
@@ -76,11 +104,14 @@ function Guess() {
               name="gender"
               value="female"
               checked={selected === "female"}
-              onChange={(e) => setSelected(e.target.value)}
+              onChange={handleSelection}
             />
             Menina
           </label>
         </div>
+
+        {message && <p className="selected-message">{message}</p>}
+        {successMessage && <p className="success-message">{successMessage}</p>}
 
         <button type="submit">Salvar Palpite</button>
       </form>

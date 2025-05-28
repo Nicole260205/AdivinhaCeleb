@@ -10,11 +10,12 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
       const user = await login(email, password);
       const userData = await getUserData(user.uid);
 
-      // Sempre redireciona para /home, independente do papel
+      // Redireciona sempre para /home
       navigate("/home");
     } catch (err) {
       setError(err.message);
@@ -42,6 +43,7 @@ function Login() {
         />
 
         <button type="submit">Entrar</button>
+
         {error && <p className="error">{error}</p>}
       </form>
     </div>

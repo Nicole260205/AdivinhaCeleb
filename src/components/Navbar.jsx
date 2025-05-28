@@ -42,7 +42,7 @@ function Navbar() {
           </li>
           <li className={isActive("/guess") ? "active" : ""}>
             <Link to="/guess" onClick={() => setMenuOpen(false)}>
-              Guess
+              Palpites
             </Link>
           </li>
           <li className={isActive("/ranking") ? "active" : ""}>
@@ -59,7 +59,6 @@ function Navbar() {
       </div>
 
       <div className="navbar-right">
-        {playerName && <span className="greeting">Olá, {playerName}</span>}
         <button className="logout-button" onClick={handleLogout}>
           Sair
         </button>

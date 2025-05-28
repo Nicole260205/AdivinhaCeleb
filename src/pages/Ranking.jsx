@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { fetchRanking } from "../services/ranking";
 import Navbar from "../components/Navbar";
 
-
 function Ranking() {
   const [ranking, setRanking] = useState([]);
 

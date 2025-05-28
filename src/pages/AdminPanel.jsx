@@ -98,7 +98,7 @@ function AdminPanel() {
 
       <h2>Lista de Celebridades</h2>
       <div className="celeb-list">
-        {celebrities.map((c) => (
+        {celebrities.reverse().map((c) => (
           <div key={c.id} className="celeb-card">
             <img src={c.photo} alt={c.name} />
             <h3>{c.name}</h3>

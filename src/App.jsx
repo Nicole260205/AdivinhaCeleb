@@ -8,6 +8,8 @@ import AdminPanel from "./pages/AdminPanel";
 import { AuthProvider } from "./contexts/AuthContext";
 import Ranking from "./pages/Ranking";
 import LandingPage from "./pages/LandingPage";
+import GuessHistory from "./pages/GuessHistory";
+
 function App() {
   return (
     <AuthProvider>
@@ -18,6 +20,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/home" element={<Home />} />
           <Route path="/guess/:id" element={<Guess />} />
+          <Route path="/guess" element={<GuessHistory />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/ranking" element={<Ranking />} />
         </Routes>

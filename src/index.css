@@ -27,13 +27,25 @@ body {
 }
 
 /* Containers centrais */
-.register-container,
-.login-container,
 .guess-container,
 .admin-container,
 .home-container,
+.history-container,
 .ranking-container {
   max-width: 900px;
+  width: 900px;            /* largura fixa */
+  min-height: 600px;       /* altura mínima fixa (ajusta conforme quiser) */
+  margin: 40px auto;
+  background: var(--white);
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  box-sizing: border-box;  /* pra padding não aumentar a largura */
+}
+.login-container,
+.register-container{
+  max-width: 500px;
   margin: 40px auto;
   background: var(--white);
   padding: 20px 30px;
@@ -41,7 +53,6 @@ body {
   box-shadow: var(--shadow);
   text-align: center;
 }
-
 /* Títulos */
 h1, h2, h3 {
   color: var(--dark-pink);
@@ -99,9 +110,9 @@ button:hover {
 
 /* Mensagens de erro */
 .error {
-  color: #e63946;
-  margin-top: 12px;
-  font-weight: 600;
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
 /* Listas e cards */
@@ -163,17 +174,31 @@ button:hover {
   background-color: var(--dark-pink);
 }
 
+/* Histórico */
+
+.history-card.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  background-color: white;
+  text-align: center;
+}
+
+
 /* Navbar */
 .navbar {
-  background-color: var(--baby-pink);
-  padding: 12px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 0 0 16px 16px;
+  background-color: var(--baby-pink);
+  padding: 10px 20px;
+  border-radius: 0 0 12px 12px;
   box-shadow: var(--shadow);
   position: relative;
-  z-index: 1000; 
+  z-index: 100;
 }
 
 .navbar-left {
@@ -181,58 +206,32 @@ button:hover {
   align-items: center;
 }
 
-.menu-icon {
-  display: none;
-  cursor: pointer;
-  color: var(--white);
+.navbar-right {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2%;
 }
 
 .navbar-list {
   list-style: none;
   display: flex;
-  gap: 25px;
-}
-
-.navbar-list li a {
-  color: var(--white);
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s;
-}
-
-.navbar-list li a:hover {
-  color: var(--hover-pink);
-}
-
-.navbar-list li.active a {
-  color: var(--hover-pink);
-  border-bottom: 2px solid var(--hover-pink);
-}
-
-.navbar-right {
-  display: flex;
-  align-items: center;
   gap: 20px;
 }
 
-.greeting {
+.navbar-list li a {
+  text-decoration: none;
   color: var(--white);
   font-weight: bold;
 }
 
-.logout-button {
-  background-color: var(--dark-pink);
-  color: var(--white);
-  border: none;
-  padding: 8px 16px;
-  border-radius: 10px;
+.navbar-list li.active a {
+  border-bottom: 2px solid var(--white);
+}
+
+.menu-icon {
+  display: none;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.logout-button:hover {
-  background-color: var(--hover-pink);
+  color: var(--white);
 }
 
 /* Mobile */
@@ -243,30 +242,70 @@ button:hover {
 
   .navbar-list {
     position: absolute;
-    top: 60px;
+    top: 69px;
     left: 0;
     background-color: var(--baby-pink);
     width: 100%;
     flex-direction: column;
-    gap: 20px;
-    padding: 20px;
+    gap: 0;
     display: none;
-    z-index: 9999; /* <-- Garante que fique acima de qualquer coisa */
-    border-radius: 0 0 16px 16px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+    border-radius: 0 0 12px 12px;
     box-shadow: var(--shadow);
+    z-index: 999;
   }
 
   .navbar-list.open {
     display: flex;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .navbar-right {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8%;
   }
 
-  .navbar-right {
-    gap: 10px;
+  .navbar-list li {
+    padding: 15px 0;
+    border-top: 1px solid var(--white);
+    width: 100%;
+    text-align: center;
+  }
+
+  .navbar-list li:first-child {
+    border-top: none;
   }
 }
 
+.logout-button {
+  background-color: var(--dark-pink);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: var(--hover-pink);
+}
+
+
 
 /* Home - lista de celebridades em grid */
+
+.celeb-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+
 .celebrity-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -325,6 +364,17 @@ button:hover {
   border-radius: 10px;
   margin-bottom: 12px;
 }
+
+.celeb-img {
+  width: 300px;
+  max-width: 90%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin: 0 auto 20px;
+  display: block;
+}
+
 
 /* Nome */
 .celebrity-card h3,
@@ -451,6 +501,79 @@ button:hover {
 input[type="radio"] {
   margin-right: 8px;
 }
+
+.guess-container {
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.guess-container img {
+  max-width: 100%;   /* a imagem não ultrapassa a largura do container */
+  height: auto;      /* mantém a proporção */
+  max-height: 300px; /* limite máximo de altura, ajuste conforme quiser */
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: block;
+  margin: 20px auto; /* centraliza a imagem */
+}
+
+
+.success-message {
+  color: green;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+
+.options {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.selected-message {
+  background-color: #f0f0f0;
+  color: #d16ba5;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  font-weight: bold;
+}
+
+button {
+  background-color: var(--baby-pink);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #a24b84;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 18px;
+}
+
 
 /* Loading */
 .loading {
