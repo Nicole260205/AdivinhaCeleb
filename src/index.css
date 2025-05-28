@@ -33,15 +33,15 @@ body {
 .history-container,
 .ranking-container {
   max-width: 900px;
-  width: 900px;            /* largura fixa */
-  min-height: 600px;       /* altura mínima fixa (ajusta conforme quiser) */
+  width: 900px;           
+  min-height: 600px;      
   margin: 40px auto;
   background: var(--white);
   padding: 20px 30px;
   border-radius: 12px;
   box-shadow: var(--shadow);
   text-align: center;
-  box-sizing: border-box;  /* pra padding não aumentar a largura */
+  box-sizing: border-box; 
 }
 .login-container,
 .register-container{
@@ -186,6 +186,34 @@ button:hover {
   .tagline {
     font-size: 1rem;
   }
+  
+.guess-container,
+.admin-container,
+.home-container,
+.history-container,
+.ranking-container {
+  max-width: 900px;
+  width: 900px;           
+  min-height: 600px;      
+  margin: 4px auto;
+  background: var(--white);
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  box-sizing: border-box; 
+}
+.login-container,
+.register-container{
+  max-width: 500px;
+  margin: 4px auto;
+  background: var(--white);
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
 }
 
 
