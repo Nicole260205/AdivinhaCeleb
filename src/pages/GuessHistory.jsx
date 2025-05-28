@@ -16,10 +16,12 @@ function GuessHistory() {
   useEffect(() => {
     const loadHistory = async () => {
       try {
+        console.log("UID do usuário:", user.uid);
         const [celebData, guessData] = await Promise.all([
           fetchCelebrities(),
           fetchAllUserGuesses(user.uid),
         ]);
+        console.log("Palpites encontrados:", guessData);
         setCelebrities(celebData);
         setGuesses(guessData);
       } catch (error) {
@@ -31,6 +33,7 @@ function GuessHistory() {
 
     loadHistory();
   }, [user.uid]);
+
 
   const getCelebrityById = (id) => {
     return celebrities.find((c) => String(c.id) === String(id));

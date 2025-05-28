@@ -10,7 +10,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 
-// Busca um palpite específico de um usuário para uma celebridade
+// Buscar um palpite de um usuário para uma celebridade
 export const fetchUserGuess = async (userId, celebrityId) => {
   const q = query(
     collection(db, "guesses"),
@@ -26,13 +26,13 @@ export const fetchUserGuess = async (userId, celebrityId) => {
   return null;
 };
 
-// Busca todos os palpites do usuário
-export async function fetchAllUserGuesses(userId) {
+// Buscar todos os palpites do usuário
+export const fetchAllUserGuesses = async (userId) => {
   const guessesRef = collection(db, "guesses");
   const q = query(
     guessesRef,
     where("userId", "==", userId),
-    orderBy("timestamp", "desc") // Ordena do mais recente para o mais antigo
+    orderBy("timestamp", "desc")
   );
 
   const querySnapshot = await getDocs(q);
@@ -42,11 +42,11 @@ export async function fetchAllUserGuesses(userId) {
   });
 
   return guesses;
-}
+};
 
-// Submete um palpite (cria ou atualiza)
+// Enviar ou atualizar palpite
 export const submitGuess = async (userId, celebrityId, gender) => {
-  const guessId = `${userId}_${celebrityId}`; // ID único baseado no user e na celebridade
+  const guessId = `${userId}_${celebrityId}`;
   await setDoc(doc(db, "guesses", guessId), {
     userId,
     celebrityId,

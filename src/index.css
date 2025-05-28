@@ -187,6 +187,9 @@ button:hover {
   text-align: center;
 }
 
+.history-card p{
+  color: var(--dark-pink);
+}
 
 /* Navbar */
 .navbar {
@@ -493,9 +496,13 @@ button:hover {
 }
 
 .options label {
-  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;          /* espaço entre o input e o texto */
+  margin-top: 10px;
+  font-weight: 600;
+  color: var(--border-gray);
   cursor: pointer;
-  user-select: none;
 }
 
 input[type="radio"] {
@@ -624,5 +631,19 @@ button:hover {
   button {
     padding: 10px 6px;
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .options label {
+    margin-top: 6px;
+    font-size: 1rem;
+  }
+
+  /* Se quiser os dois labels ocupando linha inteira, um embaixo do outro */
+  .options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }

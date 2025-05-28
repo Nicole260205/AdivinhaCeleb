@@ -1,9 +1,4 @@
-import { useState } from "react";
-import { auth } from "../firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import React, { useState } from "react";
 
 function Auth({ onAuth }) {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -14,12 +9,8 @@ function Auth({ onAuth }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (isRegistering) {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
-      onAuth();
+      await onAuth(email, password, isRegistering);
+      setError("");
     } catch (err) {
       setError(err.message);
     }

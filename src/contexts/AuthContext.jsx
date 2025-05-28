@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "../services/firebase";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { auth, db } from "../services/firebase"; // ajuste o caminho se precisar
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Monitorar autenticação
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -33,8 +32,7 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // Registro
-  const register = async (email, password, role) => {
+  const register = async (email, password, role = "user") => {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     await setDoc(doc(db, "users", res.user.uid), {
       email,
@@ -42,12 +40,10 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  // Login
   const login = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  // Logout
   const logout = () => {
     return signOut(auth);
   };
@@ -59,5 +55,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook para usar
 export const useAuth = () => useContext(AuthContext);
