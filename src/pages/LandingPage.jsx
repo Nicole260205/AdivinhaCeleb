@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "../assets/babyy.png";
+import logo from "/babyy.png";
 
 function LandingPage() {
   return (
