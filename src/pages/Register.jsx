@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { register } from "../services/auth";
 import { useNavigate } from "react-router-dom";
+import AvatarSelector from "../components/AvatarSelector";
 
 function Register() {
   const navigate = useNavigate();
@@ -8,13 +9,14 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("player");
+  const [avatar, setAvatar] = useState("/avatars/avatar1.png");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
-      await register(name, email, password, role);
+      await register(name, email, password, role, avatar);
       navigate("/home");
     } catch (err) {
       setError(err.message);
@@ -54,6 +56,9 @@ function Register() {
           <option value="player">Jogadora</option>
           <option value="judge">Juíza</option>
         </select>
+
+        <label>Escolha um Avatar:</label>
+        <AvatarSelector selected={avatar} setSelected={setAvatar} />
 
         <button type="submit">Registrar</button>
 

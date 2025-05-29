@@ -1,32 +1,28 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
+import { useAuth } from "../contexts/AuthContext";
 
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { currentUser, logout, userData } = useAuth();
 
-  const [playerName, setPlayerName] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const storedName = localStorage.getItem("playerName");
-    if (storedName) {
-      setPlayerName(storedName);
-    }
-  }, []);
 
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    localStorage.removeItem("playerName");
-    localStorage.removeItem("token");
+    logout();
     navigate("/");
   };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+
+  // Se não estiver logado, não renderiza a Navbar
+  if (!currentUser) return null;
 
   return (
     <nav className="navbar">
@@ -50,15 +46,30 @@ function Navbar() {
               Ranking
             </Link>
           </li>
-          <li className={isActive("/admin") ? "active" : ""}>
-            <Link to="/admin" onClick={() => setMenuOpen(false)}>
-              Admin
-            </Link>
-          </li>
+          {userData?.role === "judge" && (
+            <li className={isActive("/admin") ? "active" : ""}>
+              <Link to="/admin" onClick={() => setMenuOpen(false)}>
+                Admin
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
 
       <div className="navbar-right">
+        <Link
+          to="/profile"
+          className="profile-button"
+          onClick={() => setMenuOpen(false)}
+        >
+          <img
+            src={userData?.avatar || "/default-avatar.png"}
+            alt="avatar"
+            className="avatar"
+          />
+          <span>{userData?.name || "Perfil"}</span>
+        </Link>
+
         <button className="logout-button" onClick={handleLogout}>
           Sair
         </button>

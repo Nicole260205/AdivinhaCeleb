@@ -690,3 +690,92 @@ button:hover {
     align-items: center;
   }
 }
+.profile-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #4caf50;
+  margin-bottom: 16px;
+}
+
+.profile-stats {
+  margin-top: 16px;
+}
+
+.profile-stats p {
+  margin: 4px 0;
+}
+.avatar-selector {
+  margin-bottom: 20px;
+}
+
+.avatar-selector p {
+  margin-bottom: 8px;
+}
+
+.avatar-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.avatar-option {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s, border 0.2s;
+}
+
+.avatar-option:hover {
+  transform: scale(1.05);
+}
+
+.avatar-option.selected {
+  border: 3px solid #4caf50;
+}
+.ranking-player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ranking-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: cover;
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.profile-button:hover {
+  opacity: 0.8;
+}

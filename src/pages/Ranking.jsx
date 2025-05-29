@@ -33,7 +33,16 @@ function Ranking() {
             {ranking.map((player, index) => (
               <tr key={player.userId}>
                 <td>{index + 1}º</td>
-                <td>{player.name}</td>
+                <td>
+                  <div className="ranking-player">
+                    <img
+                      src={player.avatar}
+                      alt="Avatar"
+                      className="ranking-avatar"
+                    />
+                    {player.name}
+                  </div>
+                </td>
                 <td>{player.score}</td>
               </tr>
             ))}

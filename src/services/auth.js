@@ -7,7 +7,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 
 // REGISTRO
-export const register = async (name, email, password, role) => {
+export const register = async (name, email, password, role, avatar) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -20,6 +20,7 @@ export const register = async (name, email, password, role) => {
       name,
       email,
       role, // 'player' ou 'judge'
+      avatar, // 🔥 Salvar o avatar
     });
 
     return user;

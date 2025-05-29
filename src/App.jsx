@@ -9,6 +9,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Ranking from "./pages/Ranking";
 import LandingPage from "./pages/LandingPage";
 import GuessHistory from "./pages/GuessHistory";
+import Profile from "./pages/Profile"; 
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/guess" element={<GuessHistory />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/ranking" element={<Ranking />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
     </AuthProvider>
