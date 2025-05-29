@@ -1,12 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { useAuth } from "../contexts/AuthContext";
 
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser, logout, userData } = useAuth();
+  const { user, logout } = useAuth();
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -22,7 +22,7 @@ function Navbar() {
   };
 
   // Se não estiver logado, não renderiza a Navbar
-  if (!currentUser) return null;
+  if (!user) return null;
 
   return (
     <nav className="navbar">
@@ -46,7 +46,7 @@ function Navbar() {
               Ranking
             </Link>
           </li>
-          {userData?.role === "judge" && (
+          {user?.role === "judge" && (
             <li className={isActive("/admin") ? "active" : ""}>
               <Link to="/admin" onClick={() => setMenuOpen(false)}>
                 Admin
@@ -63,11 +63,11 @@ function Navbar() {
           onClick={() => setMenuOpen(false)}
         >
           <img
-            src={userData?.avatar || "/default-avatar.png"}
+            src={user?.avatar || "/default-avatar.png"}
             alt="avatar"
             className="avatar"
           />
-          <span>{userData?.name || "Perfil"}</span>
+          <span>{user?.name || "Perfil"}</span>
         </Link>
 
         <button className="logout-button" onClick={handleLogout}>

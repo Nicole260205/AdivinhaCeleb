@@ -4,6 +4,9 @@ const avatars = [
   "/avatars/avatar03.png",
   "/avatars/avatar04.png",
   "/avatars/avatar05.png",
+  "/avatars/avatar06.png",
+  "/avatars/avatar07.png",
+  "/avatars/avatar08.png",
 ];
 
 function AvatarSelector({ selected, setSelected }) {

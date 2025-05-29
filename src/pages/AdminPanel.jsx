@@ -67,7 +67,7 @@ function AdminPanel() {
   return (
     <div className="admin-container">
       <Navbar />
-      <h1>Painel do Juiz 👩‍⚖️</h1>
+      <h1>Painel do Juiz</h1>
 
       <form onSubmit={handleSubmit} className="admin-form">
         <input

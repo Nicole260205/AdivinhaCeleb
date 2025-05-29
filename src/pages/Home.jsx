@@ -29,7 +29,7 @@ function Home() {
   return (
     <div className="home-container">
       <Navbar />
-      <h1>Celebridades Grávidas</h1>
+      <h1>Celebridades</h1>
       <div className="celebrity-list">
         {celebrities
           .slice()

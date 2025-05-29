@@ -44,7 +44,7 @@ function GuessHistory() {
   }
 
   return (
-    <div className="guess-container">
+    <div className="history-container">
       <Navbar />
       <h1>Seu Histórico de Palpites</h1>
       {guesses.length === 0 ? (
