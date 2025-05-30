@@ -34,7 +34,6 @@ function GuessHistory() {
     loadHistory();
   }, [user.uid]);
 
-
   const getCelebrityById = (id) => {
     return celebrities.find((c) => String(c.id) === String(id));
   };
@@ -72,6 +71,19 @@ function GuessHistory() {
                           {guess.gender === "male" ? "Menino" : "Menina"}
                         </strong>
                       </p>
+
+                      {/* RESULTADO DO PALPITE */}
+                      <p>
+                        Resultado:{" "}
+                        <strong>
+                          {celeb.gender === "unknown" || !celeb.gender
+                            ? "Aguardando..."
+                            : celeb.gender === guess.gender
+                            ? "✔️ Acertou"
+                            : "❌ Errou"}
+                        </strong>
+                      </p>
+
                       <p>
                         Data do palpite:{" "}
                         <strong>
