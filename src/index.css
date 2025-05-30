@@ -618,6 +618,11 @@ button:hover {
 }
 
 /* Ranking table */
+
+.ranking-container p{
+  color: var(--dark-pink);
+}
+
 .ranking-container table {
   width: 100%;
   border-collapse: collapse;
