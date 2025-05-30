@@ -31,21 +31,15 @@ export const fetchRanking = async () => {
     }
   });
 
-  // Filtrar e montar ranking, excluindo juízes (role === "judge")
-  const ranking = Object.entries(scores)
-    .map(([userId, score]) => {
-      const user = users[userId];
-      if (!user || user.role === "judge") {
-        return null; // Ignora juízes e usuários não encontrados
-      }
-      return {
-        userId,
-        name: user.displayName || "Desconhecido",
-        score,
-        avatar: user.avatar || "", // caso tenha avatar
-      };
-    })
-    .filter(Boolean) // remove null
+  // Monta ranking com todos os usuários (exceto juízes), usando pontuação 0 para quem não tem
+  const ranking = Object.entries(users)
+    .filter(([userId, user]) => user.role !== "judge") // Exclui juízes
+    .map(([userId, user]) => ({
+      userId,
+      name: user.displayName || "Desconhecido",
+      score: scores[userId] || 0,
+      avatar: user.avatar || "",
+    }))
     .sort((a, b) => b.score - a.score);
 
   return ranking;
