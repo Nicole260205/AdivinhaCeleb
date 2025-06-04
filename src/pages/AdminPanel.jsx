@@ -9,7 +9,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
-
 function AdminPanel() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -64,6 +63,13 @@ function AdminPanel() {
     }
   };
 
+  const renderGender = (gender) => {
+    if (gender === "unknown" || !gender) return "Não Revelado";
+    if (gender === "male") return "Menino";
+    if (gender === "female") return "Menina";
+    return "Não Revelado";
+  };
+
   return (
     <div className="admin-container">
       <Navbar />
@@ -98,18 +104,11 @@ function AdminPanel() {
 
       <h2>Lista de Celebridades</h2>
       <div className="celeb-list">
-        {celebrities.reverse().map((c) => (
+        {[...celebrities].reverse().map((c) => (
           <div key={c.id} className="celeb-card">
             <img src={c.photo} alt={c.name} />
             <h3>{c.name}</h3>
-            <p>
-              Gênero:{" "}
-              {c.gender === "unknown"
-                ? "Não Revelado"
-                : c.gender === "male"
-                ? "Menino"
-                : "Menina"}
-            </p>
+            <p>Gênero: {renderGender(c.gender)}</p>
             <div className="actions">
               <button onClick={() => handleEdit(c)}>Editar</button>
               <button onClick={() => handleDelete(c.id)}>Excluir</button>

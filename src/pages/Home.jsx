@@ -22,6 +22,13 @@ function Home() {
     loadCelebrities();
   }, []);
 
+  const renderGender = (gender) => {
+    if (gender === "unknown" || !gender) {
+      return null;
+    }
+    return gender === "male" ? "Menino" : "Menina";
+  };
+
   if (loading) {
     return <p className="loading">Carregando celebridades...</p>;
   }
@@ -34,21 +41,22 @@ function Home() {
         {celebrities
           .slice()
           .reverse()
-          .map((celeb) => (
-            <div key={celeb.id} className="celebrity-card">
-              <img src={celeb.photo} alt={celeb.name} />
-              <h3>{celeb.name}</h3>
-              {celeb.gender ? (
-                <p className="gender-revealed">
-                  Gênero: {celeb.gender === "male" ? "Menino" : "Menina"}
-                </p>
-              ) : (
-                <Link to={`/guess/${celeb.id}`}>
-                  <button>Dar Palpite</button>
-                </Link>
-              )}
-            </div>
-          ))}
+          .map((celeb) => {
+            const genderLabel = renderGender(celeb.gender);
+            return (
+              <div key={celeb.id} className="celebrity-card">
+                <img src={celeb.photo} alt={celeb.name} />
+                <h3>{celeb.name}</h3>
+                {genderLabel ? (
+                  <p className="gender-revealed">Gênero: {genderLabel}</p>
+                ) : (
+                  <Link to={`/guess/${celeb.id}`}>
+                    <button>Dar Palpite</button>
+                  </Link>
+                )}
+              </div>
+            );
+          })}
       </div>
     </div>
   );

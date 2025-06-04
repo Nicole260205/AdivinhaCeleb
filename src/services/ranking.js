@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 export const fetchRanking = async () => {
   const guessesSnap = await getDocs(collection(db, "guesses"));
@@ -31,11 +31,14 @@ export const fetchRanking = async () => {
     }
   });
 
-  const ranking = Object.entries(scores)
-    .map(([userId, score]) => ({
+  // Monta ranking com todos os usuários (exceto juízes), usando pontuação 0 para quem não tem
+  const ranking = Object.entries(users)
+    .filter(([userId, user]) => user.role !== "judge") // Exclui juízes
+    .map(([userId, user]) => ({
       userId,
-      name: users[userId]?.displayName || "Desconhecido",
-      score,
+      name: user.displayName || "Desconhecido",
+      score: scores[userId] || 0,
+      avatar: user.avatar || "",
     }))
     .sort((a, b) => b.score - a.score);
 

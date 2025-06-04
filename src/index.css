@@ -618,6 +618,11 @@ button:hover {
 }
 
 /* Ranking table */
+
+.ranking-container p{
+  color: var(--dark-pink);
+}
+
 .ranking-container table {
   width: 100%;
   border-collapse: collapse;
@@ -667,15 +672,17 @@ input[type="radio"] {
   margin-right: 8px;
 }
 
-.guess-container img {
-  max-width: 100%;   /* a imagem não ultrapassa a largura do container */
-  height: auto;      /* mantém a proporção */
-  max-height: 300px; /* limite máximo de altura, ajuste conforme quiser */
+.history-container img {
+  max-width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: cover; /* Ajusta sem deformar */
   border-radius: 12px;
   box-shadow: var(--shadow);
   display: block;
-  margin: 20px auto; /* centraliza a imagem */
+  margin: 10px auto;
 }
+
 
 .success-message {
   color: green;
