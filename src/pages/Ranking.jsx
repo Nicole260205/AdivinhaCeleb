@@ -13,6 +13,14 @@ function Ranking() {
     loadRanking();
   }, []);
 
+  const getTrophyEmoji = (index) => {
+    if (index === 0) return "🥇";
+    if (index === 1) return "🥈";
+    if (index === 2) return "🥉";
+    return "";
+  };
+
+
   return (
     <div className="ranking-container">
       <Navbar />
@@ -21,7 +29,7 @@ function Ranking() {
       {ranking.length === 0 ? (
         <p>Ainda não há palpites suficientes para gerar um ranking.</p>
       ) : (
-        <table>
+        <table className="tabela-principal-ranking">
           <thead>
             <tr>
               <th>Posição</th>
@@ -31,9 +39,11 @@ function Ranking() {
           </thead>
           <tbody>
             {ranking.map((player, index) => (
-              <tr key={player.userId}>
-                <td>{index + 1}º</td>
-                <td>
+              <tr key={player.userId} className="tabela-secundaria-ranking">
+                <td data-label="Posição">
+                  {getTrophyEmoji(index)} {index + 1}º
+                </td>
+                <td data-label="Jogador">
                   <div className="ranking-player">
                     <img
                       src={player.avatar}
@@ -43,7 +53,7 @@ function Ranking() {
                     {player.name}
                   </div>
                 </td>
-                <td>{player.score}</td>
+                <td data-label="Acertos">{player.score}</td>
               </tr>
             ))}
           </tbody>
