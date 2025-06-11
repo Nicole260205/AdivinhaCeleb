@@ -17,7 +17,7 @@ export const register = async (name, email, password, role, avatar) => {
     const user = userCredential.user;
 
     await setDoc(doc(db, "users", user.uid), {
-      name,
+      displayName: name,
       email,
       role, // 'player' ou 'judge'
       avatar, // 🔥 Salvar o avatar

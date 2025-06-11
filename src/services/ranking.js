@@ -33,7 +33,7 @@ export const fetchRanking = async () => {
 
   // Monta ranking com todos os usuários (exceto juízes), usando pontuação 0 para quem não tem
   const ranking = Object.entries(users)
-    .filter(([userId, user]) => user.role !== "judge") // Exclui juízes
+    .filter(([userId, user]) => user.role !== "judge")
     .map(([userId, user]) => ({
       userId,
       name: user.displayName || "Desconhecido",
