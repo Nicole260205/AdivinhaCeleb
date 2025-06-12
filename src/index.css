@@ -32,7 +32,9 @@ body {
 .history-container,
 .ranking-container,
 .guess-container,
-.profile-container {
+.profile-container,
+.players-list-container,
+.player-guesses-container {
   max-width: 900px;
   width: 900px;           
   min-height: 600px;      
@@ -207,7 +209,9 @@ button:hover {
 .history-container,
 .home-container,
 .history-container,
-.ranking-container {
+.ranking-container,
+.players-list-container,
+.player-guesses-container {
   max-width: 900px;
   width: 900px;           
   min-height: 600px;      
@@ -429,226 +433,12 @@ button:hover {
   height: 40px;
   border-radius: 50%;
 }
-.avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--white);
-}
 
-.profile-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: none;
-  text-decoration: none;
-  color: var(--white);
-  cursor: pointer;
-  margin-top: 12px;
-}
-
-
-.profile-button:hover {
-  opacity: 0.8;
-}
-.profile-button span {
-  font-weight: bold;
-}
-
-/* Home - lista de celebridades em grid */
-
-.celeb-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-
-.celebrity-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  justify-content: center;
-}
-
-/* Cards da celebridade */
-.celebrity-card,
-.celeb-card {
-  background-color: var(--white);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  padding: 15px;
+h1 {
   text-align: center;
-  transition: transform 0.3s;
-  width: 250px;
-  height: 280px;
-  
-  /* Flex para melhor alinhamento */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-
-  /* Para permitir edição independente - posição relativa para referência */
-  position: relative;
-  z-index: 1;
-}
-
-/* Quando estiver em modo edição (exemplo: adicionar classe 'editing' via JS) */
-.celebrity-card.editing,
-.celeb-card.editing {
-  /* Aparece na frente */
-  z-index: 10;
-  box-shadow: 0 0 15px 3px var(--hover-pink);
-  transform: scale(1.05);
-  background-color: var(--white);
-  transition: transform 0.3s, box-shadow 0.3s;
-  /* Poderia adicionar position: relative já está */
-}
-
-/* Hover normal */
-.celebrity-card:hover,
-.celeb-card:hover {
-  transform: translateY(-5px);
-  z-index: 2;
-}
-
-/* Imagem */
-.celebrity-card img,
-.celeb-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 12px;
-}
-
-.celeb-img {
-  width: 300px;
-  max-width: 90%;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  margin: 0 auto 20px;
-  display: block;
-}
-
-
-/* Nome */
-.celebrity-card h3,
-.celeb-card h3 {
-  margin-top: 6px;
-  color: var(--dark-pink);
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-/* Descrição / detalhes */
-.celebrity-card p,
-.celeb-card p {
-  margin: 6px 0 0;
-  color: #666;
-  flex-grow: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Texto gênero revelado */
-.gender-revealed {
-  color: #2a9d8f;
-  font-weight: bold;
-}
-
-/* Admin form */
-.admin-form {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
   margin-bottom: 30px;
 }
 
-.admin-form input,
-.admin-form select {
-  flex: 1 1 200px;
-  padding: 10px;
-  border-radius: 10px;
-  border: 2px solid var(--baby-pink);
-}
-
-.admin-form input:focus,
-.admin-form select:focus {
-  border-color: var(--dark-pink);
-}
-
-.admin-form button {
-  flex: 1 1 150px;
-  background-color: var(--baby-pink);
-  color: var(--white);
-  font-weight: 700;
-  border-radius: 10px;
-}
-
-.admin-form button:hover {
-  background-color: var(--dark-pink);
-}
-
-/* Actions (botões pequenos em cards) */
-.actions {
-  margin-top: 8px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.actions button {
-  padding: 6px 12px;
-  background-color: var(--baby-pink);
-  border-radius: 8px;
-  font-weight: 600;
-  transition: background-color 0.3s;
-  border: none;
-  cursor: pointer;
-}
-
-.actions button:hover {
-  background-color: var(--dark-pink);
-}
-
-/* Ranking table */
-
-.ranking-container p{
-  color: var(--dark-pink);
-}
-
-.ranking-container table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.ranking-container th,
-.ranking-container td {
-  border: 1px solid #ddd;
-  padding: 12px 8px;
-  text-align: center;
-  font-weight: 600;
-  color: var(--text-dark);
-}
-
-.ranking-container th {
-  background-color: var(--baby-pink);
-  color: var(--white);
-}
-
-.ranking-container tr:nth-child(even) {
-  background-color: #fff0f6;
-}
-
-.ranking-container tr:hover {
-  background-color: #ffe1f2;
-}
 /* Estilo da tabela */
 .tabela-principal-ranking {
   width: 100%;
@@ -749,6 +539,241 @@ button:hover {
 }
 
 
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--white);
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  text-decoration: none;
+  color: var(--white);
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+
+.profile-button:hover {
+  opacity: 0.8;
+}
+.profile-button span {
+  font-weight: bold;
+}
+
+/* Home - lista de celebridades em grid */
+
+.celeb-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+
+.celebrity-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Cards da celebridade */
+.celebrity-card,
+.celeb-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.3s;
+  width: 250px;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.celebrity-card.editing,
+.celeb-card.editing {
+  z-index: 10;
+  box-shadow: 0 0 15px 3px var(--hover-pink);
+  transform: scale(1.05);
+  background-color: var(--white);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.celebrity-card:hover,
+.celeb-card:hover {
+  transform: translateY(-5px);
+  z-index: 2;
+}
+
+/* Imagem */
+.celebrity-card img,
+.celeb-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.celeb-img {
+  width: 300px;
+  max-width: 90%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin: 0 auto 20px;
+  display: block;
+}
+
+
+/* Nome */
+.celebrity-card h3,
+.celeb-card h3 {
+  margin-top: 6px;
+  color: var(--dark-pink);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Descrição / detalhes */
+.celebrity-card p,
+.celeb-card p {
+  margin: 6px 0 0;
+  color: #666;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Texto gênero revelado */
+.gender-revealed {
+  color: #2a9d8f;
+  font-weight: bold;
+}
+
+/* Admin form */
+.admin-guesses-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+}
+.admin-container h2{
+  text-align: center;
+  margin-top: 2rem;
+}
+.admin-guesses-table th,
+.admin-guesses-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+  color: var(--text-dark);
+}
+
+.admin-guesses-table th {
+  background-color: var(--baby-pink);
+}
+
+.admin-form {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.admin-form input,
+.admin-form select {
+  flex: 1 1 200px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid var(--baby-pink);
+}
+
+.admin-form input:focus,
+.admin-form select:focus {
+  border-color: var(--dark-pink);
+}
+
+.admin-form button {
+  flex: 1 1 150px;
+  background-color: var(--baby-pink);
+  color: var(--white);
+  font-weight: 700;
+  border-radius: 10px;
+}
+
+.admin-form button:hover {
+  background-color: var(--dark-pink);
+}
+
+/* Actions (botões pequenos em cards) */
+.actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.actions button {
+  padding: 6px 12px;
+  background-color: var(--baby-pink);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  background-color: var(--dark-pink);
+}
+
+/* Ranking table */
+
+.ranking-container p{
+  color: var(--dark-pink);
+}
+
+.ranking-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ranking-container th,
+.ranking-container td {
+  border: 1px solid #ddd;
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.ranking-container th {
+  background-color: var(--baby-pink);
+  color: var(--white);
+}
+
+.ranking-container tr:nth-child(even) {
+  background-color: #fff0f6;
+}
+
+.ranking-container tr:hover {
+  background-color: #ffe1f2;
+}
+
 /* Guess container */
 .options {
   display: flex;
@@ -842,12 +867,14 @@ button:hover {
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .admin-container,
+.admin-container,
 .home-container,
 .history-container,
 .ranking-container,
 .guess-container,
-.profile-container {
+.profile-container,
+.players-list-container,
+.player-guesses-container {
     max-width: 95%;
     padding: 15px 20px;
   }
@@ -896,5 +923,127 @@ button:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+}
+
+.players-list-container  p{
+  color: var(--text-dark);
+}
+
+.players-list-container h2 {
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  color: var(--dark-pink);
+  text-align: center;
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.5rem;
+}
+
+.player-card {
+  background-color: #f5f5f5;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-card:hover {
+  background-color: #e0f7fa;
+  border-color: #00bcd4;
+  transform: translateY(-4px);
+}
+
+.player-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+  border: 2px solid #ccc;
+}
+
+.player-card span {
+  font-weight: bold;
+  color: #333;
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+/* Container da tabela de palpites */
+.player-guesses-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem 1.5rem;
+  text-align: center;
+}
+
+.player-guesses-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: var(--dark-pink);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: center;
+  color: var(--text-dark);
+}
+
+th {
+  background-color: var(--baby-pink);
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+td {
+  background-color: #fafafa;
+}
+
+/* Responsividade da tabela para telas pequenas */
+@media (max-width: 600px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  td {
+    padding: 0.8rem;
+    text-align: left;
+    position: relative;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    color: #666;
+    margin-bottom: 0.3rem;
   }
 }

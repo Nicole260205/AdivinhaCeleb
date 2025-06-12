@@ -46,6 +46,11 @@ function Navbar() {
               Ranking
             </Link>
           </li>
+          <li className={isActive("/jogadoras") ? "active" : ""}>
+            <Link to="/jogadoras" onClick={() => setMenuOpen(false)}>
+              Jogadoras
+            </Link>
+          </li>
           {user?.role === "judge" && (
             <li className={isActive("/admin") ? "active" : ""}>
               <Link to="/admin" onClick={() => setMenuOpen(false)}>

@@ -10,6 +10,8 @@ import Ranking from "./pages/Ranking";
 import LandingPage from "./pages/LandingPage";
 import GuessHistory from "./pages/GuessHistory";
 import Profile from "./pages/Profile"; 
+import PlayersList from "./pages/PlayersList";
+import PlayerGuesses from "./pages/PlayerGuesses";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/jogadoras" element={<PlayersList />} />
+          <Route path="/palpites/:id" element={<PlayerGuesses />} />
         </Routes>
       </Router>
     </AuthProvider>
