@@ -24,7 +24,7 @@ export const fetchRanking = async () => {
 
     if (!celeb || celeb.gender === "unknown") return; // Ignora não revelados
 
-    const correct = guess.guess === celeb.gender;
+    const correct = guess.gender === celeb.gender;
 
     if (correct) {
       scores[guess.userId] = (scores[guess.userId] || 0) + 1;
