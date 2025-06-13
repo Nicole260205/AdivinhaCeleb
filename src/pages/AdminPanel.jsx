@@ -1,3 +1,4 @@
+// src/pages/AdminPanel.jsx
 import { useEffect, useState } from "react";
 import {
   fetchCelebrities,
@@ -5,24 +6,16 @@ import {
   deleteCelebrity,
   updateCelebrity,
 } from "../services/celebrity";
-import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 function AdminPanel() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
   const [celebrities, setCelebrities] = useState([]);
   const [form, setForm] = useState({ name: "", photo: "", gender: "unknown" });
   const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
-    if (user.role !== "judge") {
-      navigate("/");
-    }
     loadCelebrities();
-  }, [user, navigate]);
+  }, []);
 
   const loadCelebrities = async () => {
     const data = await fetchCelebrities();
@@ -31,7 +24,6 @@ function AdminPanel() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!form.name || !form.photo) {
       alert("Preencha todos os campos.");
       return;
@@ -82,14 +74,12 @@ function AdminPanel() {
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
-
         <input
           type="text"
           placeholder="URL da Foto"
           value={form.photo}
           onChange={(e) => setForm({ ...form, photo: e.target.value })}
         />
-
         <select
           value={form.gender}
           onChange={(e) => setForm({ ...form, gender: e.target.value })}
@@ -98,7 +88,6 @@ function AdminPanel() {
           <option value="male">Menino</option>
           <option value="female">Menina</option>
         </select>
-
         <button type="submit">{editingId ? "Atualizar" : "Adicionar"}</button>
       </form>
 
