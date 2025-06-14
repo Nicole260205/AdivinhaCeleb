@@ -594,12 +594,14 @@ h1 {
   padding: 15px;
   text-align: center;
   transition: transform 0.3s;
-  width: 250px;
-  height: 280px;
+  width: 100%;
+  height: 360px; /* aumentamos a altura */
+  
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+
   position: relative;
   z-index: 1;
 }
@@ -623,20 +625,11 @@ h1 {
 .celebrity-card img,
 .celeb-card img {
   width: 100%;
-  height: 160px;
+  height: 200px; /* imagem maior */
   object-fit: cover;
+  object-position: center top; /* foca mais no topo da imagem */
   border-radius: 10px;
-  margin-bottom: 12px;
-}
-
-.celeb-img {
-  width: 300px;
-  max-width: 90%;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  margin: 0 auto 20px;
-  display: block;
+  margin-bottom: 10px;
 }
 
 
