@@ -74,9 +74,9 @@ function PlayerGuesses() {
 
               return (
                 <tr key={index}>
-                  <td>{celeb?.name || "?"}</td>
-                  <td>{traduzirGenero(guess.gender)}</td>
-                  <td>
+                  <td data-label="Celebridade">{celeb?.name || "?"}</td>
+                  <td data-label="Palpite">{traduzirGenero(guess.gender)}</td>
+                  <td data-label="Resultado">
                     {acertou === null
                       ? "Ainda não revelado"
                       : acertou

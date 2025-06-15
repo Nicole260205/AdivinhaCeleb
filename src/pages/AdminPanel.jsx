@@ -6,7 +6,10 @@ import {
   deleteCelebrity,
   updateCelebrity,
 } from "../services/celebrity";
+<<<<<<< HEAD
 import { sendEmail } from "../services/email"; // ✅ serviço de email
+=======
+>>>>>>> 7eff77a076a91585f36be3031ac1391731e1d1f3
 import Navbar from "../components/Navbar";
 import { JOGADORAS } from "../data/jogadoras"; // ✅ Importa as jogadoras
 
