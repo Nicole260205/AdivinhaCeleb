@@ -605,6 +605,24 @@ h1 {
   position: relative;
   z-index: 1;
 }
+.celeb-card-admin{
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.3s;
+  width: 30%;
+  height: 360px; /* aumentamos a altura */
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  position: relative;
+  z-index: 1;
+}
 
 .celebrity-card.editing,
 .celeb-card.editing {
@@ -620,10 +638,22 @@ h1 {
   transform: translateY(-5px);
   z-index: 2;
 }
+.celeb-card-admin:hover{
+  transform: translateY(-5px);
+  z-index: 2;
+}
 
 /* Imagem */
 .celebrity-card img,
 .celeb-card img {
+  width: 100%;
+  height: 200px; /* imagem maior */
+  object-fit: cover;
+  object-position: center top; /* foca mais no topo da imagem */
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.celeb-card-admin img{
   width: 100%;
   height: 200px; /* imagem maior */
   object-fit: cover;
@@ -641,10 +671,23 @@ h1 {
   font-weight: 700;
   flex-shrink: 0;
 }
+.celeb-card-admin h3{
+  margin-top: 6px;
+  color: var(--dark-pink);
+  font-weight: 700;
+  flex-shrink: 0;
+}
 
 /* Descrição / detalhes */
 .celebrity-card p,
 .celeb-card p {
+  margin: 6px 0 0;
+  color: #666;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.celeb-card-admin p{
   margin: 6px 0 0;
   color: #666;
   flex-grow: 1;

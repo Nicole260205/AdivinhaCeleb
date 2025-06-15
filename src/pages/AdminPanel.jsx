@@ -102,11 +102,12 @@ function AdminPanel() {
   };
 
   const renderGender = (gender) => {
-    if (gender === "unknown" || !gender) return "Não Revelado";
-    if (gender === "male") return "Menino";
-    if (gender === "female") return "Menina";
-    return "Não Revelado";
+    const cleanGender = (gender || "").toLowerCase().trim();
+    if (cleanGender === "male") return "Menino";
+    if (cleanGender === "female") return "Menina";
+    return "Gênero ainda não revelado";
   };
+  
 
   return (
     <div className="admin-container">
@@ -140,10 +141,19 @@ function AdminPanel() {
       <h2>Lista de Celebridades</h2>
       <div className="celeb-list">
         {[...celebrities].reverse().map((c) => (
-          <div key={c.id} className="celeb-card">
+          <div key={c.id} className="celeb-card-admin">
             <img src={c.photo} alt={c.name} />
             <h3>{c.name}</h3>
-            <p>Gênero: {renderGender(c.gender)}</p>
+            <p
+              className={
+                c.gender !== "unknown"
+                  ? "gender-revealed"
+                  : "gender-not-revealed"
+              }
+            >
+              {renderGender(c.gender)}
+            </p>
+
             <div className="actions">
               <button onClick={() => handleEdit(c)}>Editar</button>
               <button onClick={() => handleDelete(c.id)}>Excluir</button>
