@@ -3,10 +3,12 @@ import { auth, db } from "../services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import Navbar from "../components/Navbar";
+import { fetchAllUserGuesses } from "../services/guess"; // NOVO
 
 function Profile() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Para controlar o carregamento
+  const [guesses, setGuesses] = useState([]); // NOVO
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -23,6 +25,10 @@ function Profile() {
             };
             setUser(userData);
             localStorage.setItem("user", JSON.stringify(userData));
+
+            // NOVO: buscar palpites
+            const userGuesses = await fetchAllUserGuesses(firebaseUser.uid);
+            setGuesses(userGuesses);
           } else {
             console.error("Usuário não encontrado no Firestore");
             setUser(null);
@@ -46,8 +52,8 @@ function Profile() {
   if (loading) return <p>Carregando...</p>;
   if (!user) return <p>Você não está logado.</p>;
 
-  const acertos = user.palpites?.filter((p) => p.correto).length || 0;
-  const erros = (user.palpites?.length || 0) - acertos;
+  const acertos = guesses.filter((g) => g.correto).length;
+  const erros = guesses.length - acertos;
 
   return (
     <div className="profile-container">
@@ -58,7 +64,7 @@ function Profile() {
         <h2>{user.name}</h2>
         <p>Email: {user.email}</p>
         <div className="profile-stats">
-          <p>Palpites: {user.palpites?.length || 0}</p>
+          <p>Palpites: {guesses.length}</p>
           <p>✅ Acertos: {acertos}</p>
           <p>❌ Erros: {erros}</p>
         </div>

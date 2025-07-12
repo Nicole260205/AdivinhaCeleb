@@ -6,6 +6,7 @@ import {
   getDocs,
   setDoc,
   doc,
+  getDoc,
   serverTimestamp,
   orderBy,
 } from "firebase/firestore";
@@ -44,13 +45,28 @@ export const fetchAllUserGuesses = async (userId) => {
   return guesses;
 };
 
-// Enviar ou atualizar palpite
+// Enviar ou atualizar palpite (com validação de acerto)
 export const submitGuess = async (userId, celebrityId, gender) => {
   const guessId = `${userId}_${celebrityId}`;
+
+  // Buscar o gênero real da celebridade
+  const celebRef = doc(db, "celebrities", celebrityId);
+  const celebSnap = await getDoc(celebRef);
+
+  let correto = null;
+
+  if (celebSnap.exists()) {
+    const celebData = celebSnap.data();
+    if (celebData.gender && celebData.gender !== "unknown") {
+      correto = celebData.gender === gender;
+    }
+  }
+
   await setDoc(doc(db, "guesses", guessId), {
     userId,
     celebrityId,
     gender,
     timestamp: serverTimestamp(),
+    correto, // 👈 salva se o palpite está certo ou não
   });
 };
