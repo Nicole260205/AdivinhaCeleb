@@ -52,8 +52,15 @@ function Profile() {
   if (loading) return <p>Carregando...</p>;
   if (!user) return <p>Você não está logado.</p>;
 
-  const acertos = guesses.filter((g) => g.correto).length;
+  const acertos = guesses.filter((g) => {
+    if (g.correto !== undefined) return g.correto;
+
+    // Verificação dinâmica (caso o campo "correto" ainda não esteja salvo)
+    return g.celebrityGender && g.gender === g.celebrityGender;
+  }).length;
+
   const erros = guesses.length - acertos;
+  
 
   return (
     <div className="profile-container">

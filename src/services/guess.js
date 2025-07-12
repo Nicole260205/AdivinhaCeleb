@@ -38,9 +38,23 @@ export const fetchAllUserGuesses = async (userId) => {
 
   const querySnapshot = await getDocs(q);
   const guesses = [];
-  querySnapshot.forEach((doc) => {
-    guesses.push({ id: doc.id, ...doc.data() });
-  });
+
+  for (const docSnap of querySnapshot.docs) {
+    const guessData = docSnap.data();
+    const celebRef = doc(db, "celebrities", guessData.celebrityId);
+    const celebSnap = await getDoc(celebRef);
+
+    let celebrityGender = null;
+    if (celebSnap.exists()) {
+      celebrityGender = celebSnap.data().gender || null;
+    }
+
+    guesses.push({
+      id: docSnap.id,
+      ...guessData,
+      celebrityGender, // 👉 isso será usado no Profile.jsx
+    });
+  }
 
   return guesses;
 };
