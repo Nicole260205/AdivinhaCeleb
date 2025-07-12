@@ -576,7 +576,9 @@ h1 {
   gap: 20px;
   justify-content: center;
 }
-
+.celeb-img{
+  width: 430px;
+}
 
 .celebrity-list {
   display: grid;
@@ -891,7 +893,9 @@ button:hover {
     min-height: 320px; /* garantir espaço para conteúdo */
     margin: 0 auto;
   }
-
+  .celeb-img{
+    width: 230px;
+  }
   .celebrity-card img,
   .celeb-card img {
     height: 180px;
