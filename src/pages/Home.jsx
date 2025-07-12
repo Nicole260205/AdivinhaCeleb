@@ -40,7 +40,6 @@ function Home() {
       <div className="celebrity-list">
         {celebrities
           .slice()
-          .reverse()
           .map((celeb) => {
             const genderLabel = renderGender(celeb.gender);
             return (
