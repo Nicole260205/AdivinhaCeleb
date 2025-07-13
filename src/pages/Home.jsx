@@ -10,8 +10,7 @@ function Home() {
   useEffect(() => {
     const loadCelebrities = async () => {
       try {
-        const data = await fetchCelebrities();
-        console.log("Celebridades:", data);
+        const data = await fetchCelebrities(); // já vem ordenado
         setCelebrities(data);
       } catch (error) {
         console.error("Erro ao carregar celebridades:", error);
@@ -23,39 +22,33 @@ function Home() {
   }, []);
 
   const renderGender = (gender) => {
-    if (gender === "unknown" || !gender) {
-      return null;
-    }
+    if (gender === "unknown" || !gender) return null;
     return gender === "male" ? "Menino" : "Menina";
   };
 
-  if (loading) {
-    return <p className="loading">Carregando celebridades...</p>;
-  }
+  if (loading) return <p className="loading">Carregando celebridades...</p>;
 
   return (
     <div className="home-container">
       <Navbar />
       <h1>Celebridades</h1>
       <div className="celebrity-list">
-        {celebrities
-          .slice()
-          .map((celeb) => {
-            const genderLabel = renderGender(celeb.gender);
-            return (
-              <div key={celeb.id} className="celebrity-card">
-                <img src={celeb.photo} alt={celeb.name} />
-                <h3>{celeb.name}</h3>
-                {genderLabel ? (
-                  <p className="gender-revealed">Gênero: {genderLabel}</p>
-                ) : (
-                  <Link to={`/guess/${celeb.id}`}>
-                    <button>Dar Palpite</button>
-                  </Link>
-                )}
-              </div>
-            );
-          })}
+        {celebrities.map((celeb) => {
+          const genderLabel = renderGender(celeb.gender);
+          return (
+            <div key={celeb.id} className="celebrity-card">
+              <img src={celeb.photo} alt={celeb.name} />
+              <h3>{celeb.name}</h3>
+              {genderLabel ? (
+                <p className="gender-revealed">Gênero: {genderLabel}</p>
+              ) : (
+                <Link to={`/guess/${celeb.id}`}>
+                  <button>Dar Palpite</button>
+                </Link>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
