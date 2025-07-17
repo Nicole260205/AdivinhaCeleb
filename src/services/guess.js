@@ -9,7 +9,14 @@ import {
   getDoc,
   serverTimestamp,
   orderBy,
+  deleteDoc,
 } from "firebase/firestore";
+
+
+export async function deleteGuess(guessId) {
+  const guessRef = doc(db, "guesses", guessId);
+  await deleteDoc(guessRef);
+}
 
 // Buscar um palpite de um usuário para uma celebridade
 export const fetchUserGuess = async (userId, celebrityId) => {
@@ -83,4 +90,6 @@ export const submitGuess = async (userId, celebrityId, gender) => {
     timestamp: serverTimestamp(),
     correto, // 👈 salva se o palpite está certo ou não
   });
+
+  
 };

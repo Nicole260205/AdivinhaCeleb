@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchCelebrities } from "../services/celebrity";
-import { fetchAllUserGuesses } from "../services/guess";
+import { fetchAllUserGuesses, deleteGuess } from "../services/guess"; // 🔥 importa deleteGuess
 import { useAuth } from "../contexts/AuthContext";
 import Navbar from "../components/Navbar";
 
@@ -16,12 +16,10 @@ function GuessHistory() {
   useEffect(() => {
     const loadHistory = async () => {
       try {
-        console.log("UID do usuário:", user.uid);
         const [celebData, guessData] = await Promise.all([
           fetchCelebrities(),
           fetchAllUserGuesses(user.uid),
         ]);
-        console.log("Palpites encontrados:", guessData);
         setCelebrities(celebData);
         setGuesses(guessData);
       } catch (error) {
@@ -36,6 +34,20 @@ function GuessHistory() {
 
   const getCelebrityById = (id) => {
     return celebrities.find((c) => String(c.id) === String(id));
+  };
+
+  const handleDeleteGuess = async (guessId) => {
+    const confirm = window.confirm(
+      "Tem certeza que deseja excluir este palpite?"
+    );
+    if (confirm) {
+      try {
+        await deleteGuess(guessId);
+        setGuesses((prev) => prev.filter((g) => g.id !== guessId));
+      } catch (error) {
+        alert("Erro ao excluir palpite.");
+      }
+    }
   };
 
   if (loading) {
@@ -71,8 +83,6 @@ function GuessHistory() {
                           {guess.gender === "male" ? "Menino" : "Menina"}
                         </strong>
                       </p>
-
-                      {/* RESULTADO DO PALPITE */}
                       <p>
                         Resultado:{" "}
                         <strong>
@@ -83,7 +93,6 @@ function GuessHistory() {
                             : "❌ Errou"}
                         </strong>
                       </p>
-
                       <p>
                         Data do palpite:{" "}
                         <strong>
@@ -93,6 +102,12 @@ function GuessHistory() {
                       </p>
                       <button onClick={() => navigate(`/guess/${celeb.id}`)}>
                         Editar Palpite
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDeleteGuess(guess.id)}
+                      >
+                        Excluir Palpite
                       </button>
                     </div>
                   </>
