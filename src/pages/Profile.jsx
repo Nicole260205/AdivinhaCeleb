@@ -3,11 +3,11 @@ import { auth, db } from "../services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import Navbar from "../components/Navbar";
-import { fetchAllUserGuesses } from "../services/guess"; // NOVO
+import { fetchAllUserGuesses } from "../services/guess";
 
 function Profile() {
   const [user, setUser] = useState(null);
-  const [guesses, setGuesses] = useState([]); // NOVO
+  const [guesses, setGuesses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +26,6 @@ function Profile() {
             setUser(userData);
             localStorage.setItem("user", JSON.stringify(userData));
 
-            // NOVO: buscar palpites
             const userGuesses = await fetchAllUserGuesses(firebaseUser.uid);
             setGuesses(userGuesses);
           } else {
@@ -52,15 +51,18 @@ function Profile() {
   if (loading) return <p>Carregando...</p>;
   if (!user) return <p>Você não está logado.</p>;
 
-  const acertos = guesses.filter((g) => {
-    if (g.correto !== undefined) return g.correto;
+  // Filtra palpites com celebridades já reveladas
+  const palpitesRevelados = guesses.filter(
+    (g) => g.celebrityGender && g.celebrityGender !== "unknown"
+  );
 
-    // Verificação dinâmica (caso o campo "correto" ainda não esteja salvo)
-    return g.celebrityGender && g.gender === g.celebrityGender;
-  }).length;
+  const acertos = palpitesRevelados.filter(
+    (g) => g.gender === g.celebrityGender
+  ).length;
 
-  const erros = guesses.length - acertos;
-  
+  const erros = palpitesRevelados.length - acertos;
+
+  const aguardandoRevelacao = guesses.length - palpitesRevelados.length;
 
   return (
     <div className="profile-container">
@@ -74,6 +76,7 @@ function Profile() {
           <p>Palpites: {guesses.length}</p>
           <p>✅ Acertos: {acertos}</p>
           <p>❌ Erros: {erros}</p>
+          <p>⏳ Aguardando Revelação: {aguardandoRevelacao}</p>
         </div>
       </div>
     </div>
