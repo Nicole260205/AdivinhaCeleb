@@ -4,11 +4,13 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import Navbar from "../components/Navbar";
 import { fetchAllUserGuesses } from "../services/guess";
+import { fetchCelebrities } from "../services/celebrity"; // ✅ novo
 
 function Profile() {
   const [user, setUser] = useState(null);
   const [guesses, setGuesses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [unrevealedCount, setUnrevealedCount] = useState(0); // ✅ novo
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -28,6 +30,13 @@ function Profile() {
 
             const userGuesses = await fetchAllUserGuesses(firebaseUser.uid);
             setGuesses(userGuesses);
+
+            // ✅ buscar celebridades com gênero unknown
+            const allCelebs = await fetchCelebrities();
+            const unrevealed = allCelebs.filter(
+              (c) => !c.gender || c.gender === "unknown"
+            );
+            setUnrevealedCount(unrevealed.length);
           } else {
             console.error("Usuário não encontrado no Firestore");
             setUser(null);
@@ -51,18 +60,16 @@ function Profile() {
   if (loading) return <p>Carregando...</p>;
   if (!user) return <p>Você não está logado.</p>;
 
-  // Filtra palpites com celebridades já reveladas
-  const palpitesRevelados = guesses.filter(
-    (g) => g.celebrityGender && g.celebrityGender !== "unknown"
-  );
+  const acertos = guesses.filter((g) => {
+    if (g.correto !== undefined) return g.correto;
+    return g.celebrityGender && g.gender === g.celebrityGender;
+  }).length;
 
-  const acertos = palpitesRevelados.filter(
-    (g) => g.gender === g.celebrityGender
-  ).length;
-
-  const erros = palpitesRevelados.length - acertos;
-
-  const aguardandoRevelacao = guesses.length - palpitesRevelados.length;
+  const erros = guesses.filter((g) => {
+    if (!g.celebrityGender || g.celebrityGender === "unknown") return false; // não conta como erro ainda
+    if (g.correto !== undefined) return !g.correto;
+    return g.gender !== g.celebrityGender;
+  }).length;
 
   return (
     <div className="profile-container">
@@ -76,7 +83,7 @@ function Profile() {
           <p>Palpites: {guesses.length}</p>
           <p>✅ Acertos: {acertos}</p>
           <p>❌ Erros: {erros}</p>
-          <p>⏳ Aguardando Revelação: {aguardandoRevelacao}</p>
+          <p>Celebridades ainda não reveladas: {unrevealedCount}</p>
         </div>
       </div>
     </div>
