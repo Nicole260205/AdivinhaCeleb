@@ -7,6 +7,9 @@ import {
   updateCelebrity,
 } from "../services/celebrity";
 import Navbar from "../components/Navbar";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../services/firebase";
+import { sendEmailToUser } from "../services/email"; // sua função para enviar email com EmailJS
 
 function AdminPanel() {
   const [celebrities, setCelebrities] = useState([]);
@@ -55,6 +58,25 @@ function AdminPanel() {
     }
   };
 
+  // Função para enviar email para todas as usuárias cadastradas no Firestore
+  const handleNotifyUsers = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "users"));
+      const users = snapshot.docs.map((doc) => doc.data());
+
+      for (const user of users) {
+        if (user.email && user.name) {
+          await sendEmailToUser(user.email, user.name);
+        }
+      }
+
+      alert("Notificações enviadas com sucesso!");
+    } catch (error) {
+      console.error("Erro ao notificar usuárias:", error);
+      alert("Ocorreu um erro ao enviar os emails.");
+    }
+  };
+
   const renderGender = (gender) => {
     if (gender === "unknown" || !gender) return "Não Revelado";
     if (gender === "male") return "Menino";
@@ -66,6 +88,10 @@ function AdminPanel() {
     <div className="admin-container">
       <Navbar />
       <h1>Painel do Juiz</h1>
+
+      <button onClick={handleNotifyUsers} className="notify-button">
+        Notificar Usuárias
+      </button>
 
       <form onSubmit={handleSubmit} className="admin-form">
         <input
@@ -93,7 +119,7 @@ function AdminPanel() {
 
       <h2>Lista de Celebridades</h2>
       <div className="celeb-list">
-        {[...celebrities].reverse().map((c) => (
+        {[...celebrities].map((c) => (
           <div key={c.id} className="celeb-card">
             <img src={c.photo} alt={c.name} />
             <h3>{c.name}</h3>
