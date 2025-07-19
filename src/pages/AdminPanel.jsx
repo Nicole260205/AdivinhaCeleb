@@ -89,10 +89,6 @@ function AdminPanel() {
       <Navbar />
       <h1>Painel do Juiz</h1>
 
-      <button onClick={handleNotifyUsers} className="notify-button">
-        Notificar Usuárias
-      </button>
-
       <form onSubmit={handleSubmit} className="admin-form">
         <input
           type="text"
@@ -116,6 +112,9 @@ function AdminPanel() {
         </select>
         <button type="submit">{editingId ? "Atualizar" : "Adicionar"}</button>
       </form>
+      <button onClick={handleNotifyUsers} className="notify-button">
+        Notificar Usuárias
+      </button>
 
       <h2>Lista de Celebridades</h2>
       <div className="celeb-list">
