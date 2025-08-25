@@ -1,4 +1,3 @@
-// src/pages/AdminPanel.jsx
 import { useEffect, useState } from "react";
 import {
   fetchCelebrities,
@@ -9,12 +8,14 @@ import {
 import Navbar from "../components/Navbar";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../services/firebase";
-import { sendEmailToUser } from "../services/email"; // sua função para enviar email com EmailJS
+import { sendEmailToUser } from "../services/email";
+import EditModal from "../components/EditModal";
 
 function AdminPanel() {
   const [celebrities, setCelebrities] = useState([]);
   const [form, setForm] = useState({ name: "", photo: "", gender: "unknown" });
   const [editingId, setEditingId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     loadCelebrities();
@@ -32,22 +33,28 @@ function AdminPanel() {
       return;
     }
 
-    if (editingId) {
-      await updateCelebrity(editingId, form);
-      alert("Celebridade atualizada.");
-    } else {
-      await addCelebrity(form);
-      alert("Celebridade adicionada.");
-    }
+    await addCelebrity(form);
+    alert("Celebridade adicionada.");
 
     setForm({ name: "", photo: "", gender: "unknown" });
-    setEditingId(null);
     loadCelebrities();
   };
 
   const handleEdit = (c) => {
     setForm({ name: c.name, photo: c.photo, gender: c.gender });
     setEditingId(c.id);
+    setShowModal(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (editingId) {
+      await updateCelebrity(editingId, form);
+      alert("Celebridade atualizada.");
+      setEditingId(null);
+      setForm({ name: "", photo: "", gender: "unknown" });
+      setShowModal(false);
+      loadCelebrities();
+    }
   };
 
   const handleDelete = async (id) => {
@@ -58,7 +65,6 @@ function AdminPanel() {
     }
   };
 
-  // Função para enviar email para todas as usuárias cadastradas no Firestore
   const handleNotifyUsers = async () => {
     try {
       const snapshot = await getDocs(collection(db, "users"));
@@ -89,36 +95,13 @@ function AdminPanel() {
       <Navbar />
       <h1>Painel do Juiz</h1>
 
-      <form onSubmit={handleSubmit} className="admin-form">
-        <input
-          type="text"
-          placeholder="Nome da Celebridade"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="URL da Foto"
-          value={form.photo}
-          onChange={(e) => setForm({ ...form, photo: e.target.value })}
-        />
-        <select
-          value={form.gender}
-          onChange={(e) => setForm({ ...form, gender: e.target.value })}
-        >
-          <option value="unknown">Não Revelado</option>
-          <option value="male">Menino</option>
-          <option value="female">Menina</option>
-        </select>
-        <button type="submit">{editingId ? "Atualizar" : "Adicionar"}</button>
-      </form>
       <button onClick={handleNotifyUsers} className="notify-button">
         Notificar Usuárias
       </button>
 
       <h2>Lista de Celebridades</h2>
       <div className="celeb-list">
-        {[...celebrities].map((c) => (
+        {celebrities.map((c) => (
           <div key={c.id} className="celeb-card">
             <img src={c.photo} alt={c.name} />
             <h3>{c.name}</h3>
@@ -130,6 +113,15 @@ function AdminPanel() {
           </div>
         ))}
       </div>
+
+      {/* Modal de edição */}
+      <EditModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        form={form}
+        setForm={setForm}
+        onSave={handleSaveEdit}
+      />
     </div>
   );
 }
