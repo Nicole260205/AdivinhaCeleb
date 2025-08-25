@@ -6,9 +6,7 @@ import {
   updateCelebrity,
 } from "../services/celebrity";
 import Navbar from "../components/Navbar";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../services/firebase";
-import { sendEmailToUser } from "../services/email";
+import { notifyAllPlayers } from "../services/email"; // ✅ novo import
 import EditModal from "../components/EditModal";
 
 function AdminPanel() {
@@ -65,20 +63,13 @@ function AdminPanel() {
     }
   };
 
+  // ✅ Agora notifica apenas as jogadoras fixas
   const handleNotifyUsers = async () => {
     try {
-      const snapshot = await getDocs(collection(db, "users"));
-      const users = snapshot.docs.map((doc) => doc.data());
-
-      for (const user of users) {
-        if (user.email && user.name) {
-          await sendEmailToUser(user.email, user.name);
-        }
-      }
-
+      await notifyAllPlayers();
       alert("Notificações enviadas com sucesso!");
     } catch (error) {
-      console.error("Erro ao notificar usuárias:", error);
+      console.error("Erro ao notificar jogadoras:", error);
       alert("Ocorreu um erro ao enviar os emails.");
     }
   };
