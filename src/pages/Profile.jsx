@@ -4,13 +4,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import Navbar from "../components/Navbar";
 import { fetchAllUserGuesses } from "../services/guess";
-import { fetchCelebrities } from "../services/celebrity"; // ✅ novo
+import { fetchCelebrities } from "../services/celebrity";
 
 function Profile() {
   const [user, setUser] = useState(null);
   const [guesses, setGuesses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [unrevealedCount, setUnrevealedCount] = useState(0); // ✅ novo
+  const [unrevealedCount, setUnrevealedCount] = useState(0);
+  const [missingGuesses, setMissingGuesses] = useState(0); // ✅ novo
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -31,12 +32,18 @@ function Profile() {
             const userGuesses = await fetchAllUserGuesses(firebaseUser.uid);
             setGuesses(userGuesses);
 
-            // ✅ buscar celebridades com gênero unknown
+            // ✅ buscar celebridades ainda não reveladas
             const allCelebs = await fetchCelebrities();
             const unrevealed = allCelebs.filter(
               (c) => !c.gender || c.gender === "unknown"
             );
             setUnrevealedCount(unrevealed.length);
+
+            // ✅ descobrir quais palpites estão faltando
+            const missing = unrevealed.filter(
+              (c) => !userGuesses.some((g) => g.celebrityId === c.id)
+            ).length;
+            setMissingGuesses(missing);
           } else {
             console.error("Usuário não encontrado no Firestore");
             setUser(null);
@@ -66,7 +73,7 @@ function Profile() {
   }).length;
 
   const erros = guesses.filter((g) => {
-    if (!g.celebrityGender || g.celebrityGender === "unknown") return false; // não conta como erro ainda
+    if (!g.celebrityGender || g.celebrityGender === "unknown") return false;
     if (g.correto !== undefined) return !g.correto;
     return g.gender !== g.celebrityGender;
   }).length;
@@ -83,7 +90,8 @@ function Profile() {
           <p>Palpites: {guesses.length}</p>
           <p>✅ Acertos: {acertos}</p>
           <p>❌ Erros: {erros}</p>
-          <p>Celebridades ainda não reveladas: {unrevealedCount}</p>
+          <p>🎭 Celebridades ainda não reveladas: {unrevealedCount}</p>
+          <p>🤔 Palpites faltando: {missingGuesses}</p> 
         </div>
       </div>
     </div>
