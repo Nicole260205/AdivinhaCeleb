@@ -2,6 +2,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  sendPasswordResetEmail, // ✅ import para reset de senha
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
@@ -74,5 +75,20 @@ export const getUserData = async (uid) => {
     return docSnap.data();
   } else {
     throw new Error("Dados do usuário não encontrados.");
+  }
+};
+
+// ✅ RESET DE SENHA
+export const resetPassword = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (error) {
+    if (error.code === "auth/user-not-found") {
+      throw new Error("Usuário não encontrado.");
+    } else if (error.code === "auth/invalid-email") {
+      throw new Error("Email inválido.");
+    } else {
+      throw new Error("Erro ao enviar o link de redefinição de senha.");
+    }
   }
 };

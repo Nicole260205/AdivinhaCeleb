@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login, getUserData } from "../services/auth";
+import { login, getUserData, resetPassword } from "../services/auth"; // ✅ import reset
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -7,16 +7,31 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setMessage("");
     try {
       const user = await login(email, password);
-      const userData = await getUserData(user.uid);
+      await getUserData(user.uid);
 
-      // Redireciona sempre para /home
-      navigate("/home");
+      navigate("/home"); // Redireciona sempre para /home
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      setError("Digite seu email para redefinir a senha.");
+      return;
+    }
+    setError("");
+    try {
+      await resetPassword(email);
+      setMessage("Enviamos um link de redefinição para o seu email.");
     } catch (err) {
       setError(err.message);
     }
@@ -44,7 +59,23 @@ function Login() {
 
         <button type="submit">Entrar</button>
 
+        {/* ✅ Botão de reset */}
+        <button
+          type="button"
+          onClick={handleResetPassword}
+          style={{
+            background: "hsl(350, 100%, 88%);",
+            border: "none",
+            color: "white",
+            cursor: "pointer",
+            marginTop: "20px",
+          }}
+        >
+          Esqueci minha senha
+        </button>
+
         {error && <p className="error">{error}</p>}
+        {message && <p className="success">{message}</p>}
       </form>
     </div>
   );

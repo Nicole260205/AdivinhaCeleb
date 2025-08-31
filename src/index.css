@@ -2,7 +2,7 @@
 
 :root {
   --baby-blue: #add2e4;
-  --baby-pink: #ffc0cb;
+  --baby-pink: hsl(350, 100%, 88%);
   --dark-pink: #f678a7;
   --hover-pink: #ff69b4;
   --white: #ffffff;
