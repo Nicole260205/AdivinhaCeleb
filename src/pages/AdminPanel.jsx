@@ -63,7 +63,6 @@ function AdminPanel() {
     }
   };
 
-  // ✅ Agora notifica apenas as jogadoras fixas
   const handleNotifyUsers = async () => {
     try {
       await notifyAllPlayers();
@@ -90,6 +89,35 @@ function AdminPanel() {
         Notificar Usuárias
       </button>
 
+      {/* Formulário para adicionar celebridade */}
+      <h2>Adicionar Nova Celebridade</h2>
+      <form onSubmit={handleSubmit} className="add-celeb-form">
+        <input
+          type="text"
+          placeholder="Nome da celebridade"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          required
+        />
+        <input
+          type="text"
+          placeholder="URL da foto"
+          value={form.photo}
+          onChange={(e) => setForm({ ...form, photo: e.target.value })}
+          required
+        />
+        <select
+          value={form.gender}
+          onChange={(e) => setForm({ ...form, gender: e.target.value })}
+        >
+          <option value="unknown">Não Revelado</option>
+          <option value="male">Menino</option>
+          <option value="female">Menina</option>
+        </select>
+        <button type="submit">Adicionar</button>
+      </form>
+
+      {/* Lista de celebridades */}
       <h2>Lista de Celebridades</h2>
       <div className="celeb-list">
         {celebrities.map((c) => (
