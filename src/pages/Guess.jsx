@@ -24,7 +24,7 @@ function Guess() {
         setCelebrity(found);
 
         if (found) {
-          const existingGuess = await fetchUserGuess(user.uid, id);
+          const existingGuess = await fetchUserGuess(id);
           if (existingGuess) {
             setSelected(existingGuess.gender);
             setMessage(
@@ -57,7 +57,7 @@ function Guess() {
       return;
     }
     try {
-      await submitGuess(user.uid, id, selected);
+      const result = await submitGuess(id, selected);
       setSuccessMessage("Palpite salvo com sucesso! 🎉");
       setMessage(`Você escolheu: ${selected === "male" ? "Menino" : "Menina"}`);
 
@@ -67,16 +67,25 @@ function Guess() {
         navigate("/");
       }, 3000);
     } catch (error) {
-      alert("Erro ao salvar palpite. Tente novamente.");
+      console.error("Erro detalhado:", error);
+      if (
+        error.message.includes("permission") ||
+        error.message.includes("não autenticado")
+      ) {
+        alert("Sua sessão expirou. Por favor, faça login novamente.");
+        navigate("/login");
+      } else {
+        alert("Erro ao salvar palpite. Tente novamente.");
+      }
     }
   };
 
   if (loading) {
-    return <p className="loading">Carregando...</p>
+    return <p className="loading">Carregando...</p>;
   }
 
   if (!celebrity) {
-    return <p>Celebridade não encontrada.</p>
+    return <p>Celebridade não encontrada.</p>;
   }
 
   return (

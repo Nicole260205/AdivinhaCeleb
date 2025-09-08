@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "../services/firebase"; // ajuste o caminho se precisar
+import { auth, db } from "../services/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
@@ -15,14 +17,37 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Configurar persistência
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        console.log("Persistência configurada");
+      })
+      .catch((error) => {
+        console.error("Erro na persistência:", error);
+      });
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      console.log(
+        "AuthStateChanged:",
+        currentUser ? currentUser.email : "null"
+      );
+
       if (currentUser) {
-        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-        setUser({
-          uid: currentUser.uid,
-          email: currentUser.email,
-          ...userDoc.data(),
-        });
+        try {
+          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+          if (userDoc.exists()) {
+            setUser({
+              uid: currentUser.uid,
+              email: currentUser.email,
+              ...userDoc.data(),
+            });
+          } else {
+            setUser(currentUser);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados do usuário:", error);
+          setUser(currentUser);
+        }
       } else {
         setUser(null);
       }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchCelebrities } from "../services/celebrity";
-import { fetchAllUserGuesses, deleteGuess } from "../services/guess"; // 🔥 importa deleteGuess
+import { fetchAllUserGuesses, deleteGuess } from "../services/guess";
 import { useAuth } from "../contexts/AuthContext";
 import Navbar from "../components/Navbar";
 
@@ -18,7 +18,7 @@ function GuessHistory() {
       try {
         const [celebData, guessData] = await Promise.all([
           fetchCelebrities(),
-          fetchAllUserGuesses(user.uid),
+          fetchAllUserGuesses(),
         ]);
         setCelebrities(celebData);
         setGuesses(guessData);
@@ -29,8 +29,10 @@ function GuessHistory() {
       }
     };
 
-    loadHistory();
-  }, [user.uid]);
+    if (user) {
+      loadHistory();
+    }
+  }, [user]);
 
   const getCelebrityById = (id) => {
     return celebrities.find((c) => String(c.id) === String(id));
@@ -48,6 +50,33 @@ function GuessHistory() {
         alert("Erro ao excluir palpite.");
       }
     }
+  };
+
+  // Função para formatar a data de forma segura
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return "Desconhecida";
+
+    // Se já é um objeto Date
+    if (timestamp instanceof Date) {
+      return timestamp.toLocaleDateString();
+    }
+
+    // Se é um Timestamp do Firestore (com método toDate)
+    if (timestamp.toDate && typeof timestamp.toDate === "function") {
+      return timestamp.toDate().toLocaleDateString();
+    }
+
+    // Se é um número (milissegundos)
+    if (typeof timestamp === "number") {
+      return new Date(timestamp).toLocaleDateString();
+    }
+
+    // Se é um objeto com seconds (formato Firestore alternativo)
+    if (timestamp.seconds && typeof timestamp.seconds === "number") {
+      return new Date(timestamp.seconds * 1000).toLocaleDateString();
+    }
+
+    return "Desconhecida";
   };
 
   if (loading) {
@@ -95,10 +124,7 @@ function GuessHistory() {
                       </p>
                       <p>
                         Data do palpite:{" "}
-                        <strong>
-                          {guess.timestamp?.toDate().toLocaleDateString() ||
-                            "Desconhecida"}
-                        </strong>
+                        <strong>{formatTimestamp(guess.timestamp)}</strong>
                       </p>
                       <button onClick={() => navigate(`/guess/${celeb.id}`)}>
                         Editar Palpite

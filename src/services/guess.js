@@ -66,7 +66,7 @@ export const fetchAllUserGuesses = async () => {
     guesses.push({
       id: docSnap.id,
       ...guessData,
-      celebrityGender, // 👉 usado no Profile.jsx
+      celebrityGender,
     });
   }
 
@@ -75,28 +75,37 @@ export const fetchAllUserGuesses = async () => {
 
 // Enviar ou atualizar palpite (com validação de acerto)
 export const submitGuess = async (celebrityId, gender) => {
-  if (!auth.currentUser) throw new Error("Usuário não autenticado");
-
-  const userId = auth.currentUser.uid; // 🔥 pega sempre do usuário logado
-  const guessId = `${userId}_${celebrityId}`;
-
-  // Buscar o gênero real da celebridade
-  const celebRef = doc(db, "celebrities", celebrityId);
-  const celebSnap = await getDoc(celebRef);
-
-  let correto = null;
-  if (celebSnap.exists()) {
-    const celebData = celebSnap.data();
-    if (celebData.gender && celebData.gender !== "unknown") {
-      correto = celebData.gender === gender;
+  try {
+    if (!auth.currentUser) {
+      throw new Error("Usuário não autenticado");
     }
-  }
 
-  await setDoc(doc(db, "guesses", guessId), {
-    userId,
-    celebrityId,
-    gender,
-    timestamp: serverTimestamp(),
-    correto, // 👈 salva se o palpite está certo ou não
-  });
+    const userId = auth.currentUser.uid;
+    const guessId = `${userId}_${celebrityId}`;
+
+    // Buscar o gênero real da celebridade
+    const celebRef = doc(db, "celebrities", celebrityId);
+    const celebSnap = await getDoc(celebRef);
+
+    let correto = null;
+    if (celebSnap.exists()) {
+      const celebData = celebSnap.data();
+      if (celebData.gender && celebData.gender !== "unknown") {
+        correto = celebData.gender === gender;
+      }
+    }
+
+    await setDoc(doc(db, "guesses", guessId), {
+      userId,
+      celebrityId,
+      gender,
+      timestamp: serverTimestamp(),
+      correto,
+    });
+
+    return { success: true, correto };
+  } catch (error) {
+    console.error("Erro em submitGuess:", error);
+    throw error;
+  }
 };
