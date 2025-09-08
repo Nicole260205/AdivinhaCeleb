@@ -1,4 +1,4 @@
-import { db } from "./firebase";
+import { db, auth } from "./firebase";
 import {
   collection,
   query,
@@ -12,14 +12,18 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 
-
+// Deletar palpite
 export async function deleteGuess(guessId) {
   const guessRef = doc(db, "guesses", guessId);
   await deleteDoc(guessRef);
 }
 
 // Buscar um palpite de um usuário para uma celebridade
-export const fetchUserGuess = async (userId, celebrityId) => {
+export const fetchUserGuess = async (celebrityId) => {
+  if (!auth.currentUser) throw new Error("Usuário não autenticado");
+
+  const userId = auth.currentUser.uid;
+
   const q = query(
     collection(db, "guesses"),
     where("userId", "==", userId),
@@ -34,8 +38,11 @@ export const fetchUserGuess = async (userId, celebrityId) => {
   return null;
 };
 
-// Buscar todos os palpites do usuário
-export const fetchAllUserGuesses = async (userId) => {
+// Buscar todos os palpites do usuário autenticado
+export const fetchAllUserGuesses = async () => {
+  if (!auth.currentUser) throw new Error("Usuário não autenticado");
+
+  const userId = auth.currentUser.uid;
   const guessesRef = collection(db, "guesses");
   const q = query(
     guessesRef,
@@ -59,7 +66,7 @@ export const fetchAllUserGuesses = async (userId) => {
     guesses.push({
       id: docSnap.id,
       ...guessData,
-      celebrityGender, // 👉 isso será usado no Profile.jsx
+      celebrityGender, // 👉 usado no Profile.jsx
     });
   }
 
@@ -67,7 +74,10 @@ export const fetchAllUserGuesses = async (userId) => {
 };
 
 // Enviar ou atualizar palpite (com validação de acerto)
-export const submitGuess = async (userId, celebrityId, gender) => {
+export const submitGuess = async (celebrityId, gender) => {
+  if (!auth.currentUser) throw new Error("Usuário não autenticado");
+
+  const userId = auth.currentUser.uid; // 🔥 pega sempre do usuário logado
   const guessId = `${userId}_${celebrityId}`;
 
   // Buscar o gênero real da celebridade
@@ -75,7 +85,6 @@ export const submitGuess = async (userId, celebrityId, gender) => {
   const celebSnap = await getDoc(celebRef);
 
   let correto = null;
-
   if (celebSnap.exists()) {
     const celebData = celebSnap.data();
     if (celebData.gender && celebData.gender !== "unknown") {
@@ -90,6 +99,4 @@ export const submitGuess = async (userId, celebrityId, gender) => {
     timestamp: serverTimestamp(),
     correto, // 👈 salva se o palpite está certo ou não
   });
-
-  
 };
