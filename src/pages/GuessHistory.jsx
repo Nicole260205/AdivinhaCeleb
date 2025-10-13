@@ -52,26 +52,22 @@ function GuessHistory() {
     }
   };
 
-  // Função para formatar a data de forma segura
+  // 🔹 Função para formatar data de forma segura
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return "Desconhecida";
 
-    // Se já é um objeto Date
     if (timestamp instanceof Date) {
       return timestamp.toLocaleDateString();
     }
 
-    // Se é um Timestamp do Firestore (com método toDate)
     if (timestamp.toDate && typeof timestamp.toDate === "function") {
       return timestamp.toDate().toLocaleDateString();
     }
 
-    // Se é um número (milissegundos)
     if (typeof timestamp === "number") {
       return new Date(timestamp).toLocaleDateString();
     }
 
-    // Se é um objeto com seconds (formato Firestore alternativo)
     if (timestamp.seconds && typeof timestamp.seconds === "number") {
       return new Date(timestamp.seconds * 1000).toLocaleDateString();
     }
@@ -126,9 +122,33 @@ function GuessHistory() {
                         Data do palpite:{" "}
                         <strong>{formatTimestamp(guess.timestamp)}</strong>
                       </p>
-                      <button onClick={() => navigate(`/guess/${celeb.id}`)}>
-                        Editar Palpite
+
+                      {/* 🔒 Bloqueio de edição se o gênero já foi revelado */}
+                      <button
+                        onClick={() => navigate(`/guess/${celeb.id}`)}
+                        disabled={celeb.gender && celeb.gender !== "unknown"}
+                        style={{
+                          opacity:
+                            celeb.gender && celeb.gender !== "unknown"
+                              ? 0.6
+                              : 1,
+                          cursor:
+                            celeb.gender && celeb.gender !== "unknown"
+                              ? "not-allowed"
+                              : "pointer",
+                        }}
+                      >
+                        {celeb.gender && celeb.gender !== "unknown"
+                          ? "Palpite Revelado"
+                          : "Editar Palpite"}
                       </button>
+
+                      {celeb.gender && celeb.gender !== "unknown" && (
+                        <p className="info-msg">
+                          O gênero já foi revelado. Edição desativada.
+                        </p>
+                      )}
+
                       <button
                         className="delete-btn"
                         onClick={() => handleDeleteGuess(guess.id)}
