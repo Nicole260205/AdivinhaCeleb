@@ -8,6 +8,7 @@ import {
   query,
   where,
   getDocs,
+  orderBy,
 } from "firebase/firestore";
 import Navbar from "../components/Navbar";
 
@@ -16,28 +17,42 @@ function PlayerGuesses() {
   const [guesses, setGuesses] = useState([]);
   const [player, setPlayer] = useState(null);
   const [celebrities, setCelebrities] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const userSnap = await getDoc(doc(db, "users", id));
-      if (userSnap.exists()) {
-        setPlayer(userSnap.data());
+      try {
+        // 🔹 Buscar informações do jogador
+        const userSnap = await getDoc(doc(db, "users", id));
+        if (userSnap.exists()) {
+          setPlayer(userSnap.data());
+        }
+
+        // 🔹 Buscar todas as celebridades
+        const celebSnap = await getDocs(collection(db, "celebrities"));
+        const celebMap = {};
+        celebSnap.forEach((doc) => {
+          celebMap[doc.id] = doc.data();
+        });
+        setCelebrities(celebMap);
+
+        // 🔹 Buscar palpites ordenados por data (mais recentes primeiro)
+        const q = query(
+          collection(db, "guesses"),
+          where("userId", "==", id),
+          orderBy("timestamp", "desc")
+        );
+        const guessesSnap = await getDocs(q);
+        const list = [];
+        guessesSnap.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        setGuesses(list);
+      } catch (error) {
+        console.error("Erro ao carregar palpites:", error);
+      } finally {
+        setLoading(false);
       }
-
-      const celebSnap = await getDocs(collection(db, "celebrities"));
-      const celebMap = {};
-      celebSnap.forEach((doc) => {
-        celebMap[doc.id] = doc.data();
-      });
-      setCelebrities(celebMap);
-
-      const q = query(collection(db, "guesses"), where("userId", "==", id));
-      const guessesSnap = await getDocs(q);
-      const list = [];
-      guessesSnap.forEach((doc) => {
-        list.push(doc.data());
-      });
-      setGuesses(list);
     };
 
     fetchData();
@@ -46,8 +61,17 @@ function PlayerGuesses() {
   const traduzirGenero = (gender) => {
     if (gender === "male") return "Menino";
     if (gender === "female") return "Menina";
-    return gender;
+    return "—";
   };
+
+  if (loading) {
+    return (
+      <div className="player-guesses-container">
+        <Navbar />
+        <p>Carregando palpites...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="player-guesses-container">
@@ -62,6 +86,7 @@ function PlayerGuesses() {
               <th>Celebridade</th>
               <th>Palpite</th>
               <th>Resultado</th>
+              <th>Data</th>
             </tr>
           </thead>
           <tbody>
@@ -71,6 +96,21 @@ function PlayerGuesses() {
                 celeb?.gender && celeb.gender !== "unknown"
                   ? guess.gender === celeb.gender
                   : null;
+
+              // 🔹 Formatar a data do palpite
+              let dataPalpite = "—";
+              const ts = guess.timestamp;
+              if (ts) {
+                if (ts.toDate) {
+                  dataPalpite = ts.toDate().toLocaleDateString();
+                } else if (ts.seconds) {
+                  dataPalpite = new Date(
+                    ts.seconds * 1000
+                  ).toLocaleDateString();
+                } else if (typeof ts === "number") {
+                  dataPalpite = new Date(ts).toLocaleDateString();
+                }
+              }
 
               return (
                 <tr key={index}>
@@ -83,6 +123,7 @@ function PlayerGuesses() {
                       ? "✅"
                       : "❌"}
                   </td>
+                  <td data-label="Data">{dataPalpite}</td>
                 </tr>
               );
             })}
