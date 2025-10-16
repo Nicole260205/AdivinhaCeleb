@@ -17,35 +17,42 @@ function PlayerGuesses() {
   const [guesses, setGuesses] = useState([]);
   const [player, setPlayer] = useState(null);
   const [celebrities, setCelebrities] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      // Busca dados do jogador
-      const userSnap = await getDoc(doc(db, "users", id));
-      if (userSnap.exists()) {
-        setPlayer(userSnap.data());
+      try {
+        // 🔹 Buscar informações do jogador
+        const userSnap = await getDoc(doc(db, "users", id));
+        if (userSnap.exists()) {
+          setPlayer(userSnap.data());
+        }
+
+        // 🔹 Buscar todas as celebridades
+        const celebSnap = await getDocs(collection(db, "celebrities"));
+        const celebMap = {};
+        celebSnap.forEach((doc) => {
+          celebMap[doc.id] = doc.data();
+        });
+        setCelebrities(celebMap);
+
+        // 🔹 Buscar palpites ordenados por data (mais recentes primeiro)
+        const q = query(
+          collection(db, "guesses"),
+          where("userId", "==", id),
+          orderBy("timestamp", "desc")
+        );
+        const guessesSnap = await getDocs(q);
+        const list = [];
+        guessesSnap.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        setGuesses(list);
+      } catch (error) {
+        console.error("Erro ao carregar palpites:", error);
+      } finally {
+        setLoading(false);
       }
-
-      // Busca celebridades
-      const celebSnap = await getDocs(collection(db, "celebrities"));
-      const celebMap = {};
-      celebSnap.forEach((doc) => {
-        celebMap[doc.id] = doc.data();
-      });
-      setCelebrities(celebMap);
-
-      // Busca palpites (ordenados por data)
-      const q = query(
-        collection(db, "guesses"),
-        where("userId", "==", id),
-        orderBy("createdAt", "asc") // Ordena por ordem de criação
-      );
-      const guessesSnap = await getDocs(q);
-      const list = [];
-      guessesSnap.forEach((doc) => {
-        list.push(doc.data());
-      });
-      setGuesses(list);
     };
 
     fetchData();
@@ -54,24 +61,32 @@ function PlayerGuesses() {
   const traduzirGenero = (gender) => {
     if (gender === "male") return "Menino";
     if (gender === "female") return "Menina";
-    return gender;
+    return "—";
   };
+
+  if (loading) {
+    return (
+      <div className="player-guesses-container">
+        <Navbar />
+        <p>Carregando palpites...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="player-guesses-container">
       <Navbar />
       <h2>Palpites de {player?.displayName || "Jogadora"}</h2>
-
       {guesses.length === 0 ? (
         <p>Esta jogadora ainda não fez palpites.</p>
       ) : (
         <table>
           <thead>
             <tr>
-              <th>#</th>
               <th>Celebridade</th>
               <th>Palpite</th>
               <th>Resultado</th>
+              <th>Data</th>
             </tr>
           </thead>
           <tbody>
@@ -82,9 +97,23 @@ function PlayerGuesses() {
                   ? guess.gender === celeb.gender
                   : null;
 
+              // 🔹 Formatar a data do palpite
+              let dataPalpite = "—";
+              const ts = guess.timestamp;
+              if (ts) {
+                if (ts.toDate) {
+                  dataPalpite = ts.toDate().toLocaleDateString();
+                } else if (ts.seconds) {
+                  dataPalpite = new Date(
+                    ts.seconds * 1000
+                  ).toLocaleDateString();
+                } else if (typeof ts === "number") {
+                  dataPalpite = new Date(ts).toLocaleDateString();
+                }
+              }
+
               return (
                 <tr key={index}>
-                  <td data-label="Nº">{index + 1}</td>
                   <td data-label="Celebridade">{celeb?.name || "?"}</td>
                   <td data-label="Palpite">{traduzirGenero(guess.gender)}</td>
                   <td data-label="Resultado">
@@ -94,6 +123,7 @@ function PlayerGuesses() {
                       ? "✅"
                       : "❌"}
                   </td>
+                  <td data-label="Data">{dataPalpite}</td>
                 </tr>
               );
             })}
