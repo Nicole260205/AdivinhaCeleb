@@ -1,68 +1,40 @@
 import { useEffect, useState } from "react";
-import { auth, db } from "../services/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { useAuth } from "../contexts/AuthContext";
 import Navbar from "../components/Navbar";
 import { fetchAllUserGuesses } from "../services/guess";
 import { fetchCelebrities } from "../services/celebrity";
 
 function Profile() {
-  const [user, setUser] = useState(null);
+  const { user, loading } = useAuth();
   const [guesses, setGuesses] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [unrevealedCount, setUnrevealedCount] = useState(0);
-  const [missingGuesses, setMissingGuesses] = useState(0); // ✅ novo
+  const [missingGuesses, setMissingGuesses] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          const docRef = doc(db, "users", firebaseUser.uid);
-          const docSnap = await getDoc(docRef);
+    const loadProfileData = async () => {
+      if (!user) return;
 
-          if (docSnap.exists()) {
-            const userData = {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email,
-              ...docSnap.data(),
-            };
-            setUser(userData);
-            localStorage.setItem("user", JSON.stringify(userData));
+      try {
+        const userGuesses = await fetchAllUserGuesses(user.uid);
+        setGuesses(userGuesses);
 
-            const userGuesses = await fetchAllUserGuesses(firebaseUser.uid);
-            setGuesses(userGuesses);
+        const allCelebs = await fetchCelebrities();
+        const unrevealed = allCelebs.filter(
+          (c) => !c.gender || c.gender === "unknown"
+        );
+        setUnrevealedCount(unrevealed.length);
 
-            // ✅ buscar celebridades ainda não reveladas
-            const allCelebs = await fetchCelebrities();
-            const unrevealed = allCelebs.filter(
-              (c) => !c.gender || c.gender === "unknown"
-            );
-            setUnrevealedCount(unrevealed.length);
-
-            // ✅ descobrir quais palpites estão faltando
-            const missing = unrevealed.filter(
-              (c) => !userGuesses.some((g) => g.celebrityId === c.id)
-            ).length;
-            setMissingGuesses(missing);
-          } else {
-            console.error("Usuário não encontrado no Firestore");
-            setUser(null);
-            localStorage.removeItem("user");
-          }
-        } catch (error) {
-          console.error("Erro ao buscar dados do usuário:", error);
-          setUser(null);
-          localStorage.removeItem("user");
-        }
-      } else {
-        setUser(null);
-        localStorage.removeItem("user");
+        const missing = unrevealed.filter(
+          (c) => !userGuesses.some((g) => g.celebrityId === c.id)
+        ).length;
+        setMissingGuesses(missing);
+      } catch (error) {
+        console.error("Erro ao carregar perfil:", error);
       }
-      setLoading(false);
-    });
+    };
 
-    return () => unsubscribe();
-  }, []);
+    loadProfileData();
+  }, [user]);
 
   if (loading) return <p>Carregando...</p>;
   if (!user) return <p>Você não está logado.</p>;
@@ -91,7 +63,7 @@ function Profile() {
           <p>✅ Acertos: {acertos}</p>
           <p>❌ Erros: {erros}</p>
           <p>🎭 Celebridades ainda não reveladas: {unrevealedCount}</p>
-          <p>🤔 Palpites faltando: {missingGuesses}</p> 
+          <p>🤔 Palpites faltando: {missingGuesses}</p>
         </div>
       </div>
     </div>

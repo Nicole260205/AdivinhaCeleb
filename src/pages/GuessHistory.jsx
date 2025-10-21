@@ -125,6 +125,7 @@ function GuessHistory() {
 
                       {/* 🔒 Bloqueio de edição se o gênero já foi revelado */}
                       <button
+                        className="history-button"
                         onClick={() => navigate(`/guess/${celeb.id}`)}
                         disabled={celeb.gender && celeb.gender !== "unknown"}
                         style={{
@@ -150,7 +151,7 @@ function GuessHistory() {
                       )}
 
                       <button
-                        className="delete-btn"
+                        className="history-button"
                         onClick={() => handleDeleteGuess(guess.id)}
                       >
                         Excluir Palpite

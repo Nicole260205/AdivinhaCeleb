@@ -58,6 +58,18 @@ body {
   text-align: center;
   box-sizing: border-box; 
 }
+.history-container{
+  max-width: 900px;
+  width: 900px;           
+  min-height: 600px;      
+  margin: 40px auto;
+  background: var(--white);
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  box-sizing: border-box;   
+}
 
 .login-container,
 .register-container{
@@ -207,7 +219,6 @@ button:hover {
 .profile-container,
 .history-container,
 .home-container,
-.history-container,
 .ranking-container,
 .players-list-container,
 .player-guesses-container {
@@ -790,7 +801,7 @@ input[type="radio"] {
   margin-right: 8px;
 }
 
-.history-container img {
+.history-card img {
   max-width: 100%;
   height: auto;
   max-height: 250px;
@@ -846,6 +857,10 @@ button:hover {
   background-color: #a24b84;
 }
 
+.history-button{
+  width: 500px;
+}
+
 .loading {
   text-align: center;
   margin-top: 100px;
@@ -877,6 +892,9 @@ button:hover {
     flex-direction: column;
     gap: 20px;
   }
+  .history-button{
+  width: 200px;
+}
 
   /* Cards menores e ajustados para mobile */
   .celebrity-list {
