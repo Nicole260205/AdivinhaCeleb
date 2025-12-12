@@ -18,6 +18,11 @@ export async function deleteGuess(guessId) {
   await deleteDoc(guessRef);
 }
 
+export const fetchUserGuesses = async () => {
+  const res = await fetch("http://localhost:3000/guesses");
+  return res.json();
+};
+
 // Buscar um palpite de um usuário para uma celebridade
 export const fetchUserGuess = async (celebrityId) => {
   if (!auth.currentUser) throw new Error("Usuário não autenticado");
