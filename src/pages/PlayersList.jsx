@@ -7,6 +7,8 @@ import Navbar from "../components/Navbar";
 
 function PlayersList() {
   const [players, setPlayers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // Adicionei a busca para facilitar
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { currentUser, role } = useAuth();
 
@@ -18,7 +20,7 @@ function PlayersList() {
 
         snapshot.forEach((doc) => {
           const user = doc.data();
-          console.log("User doc:", doc.id, user); // Para debug
+          // Mantém a sua lógica original de filtragem
           if (
             user.role !== "judge" &&
             (doc.id !== currentUser?.uid || role === "judge")
@@ -30,28 +32,56 @@ function PlayersList() {
         setPlayers(list);
       } catch (error) {
         console.error("Erro ao buscar usuários:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUsers();
   }, [currentUser, role]);
 
+  // Filtra as jogadoras pelo nome digitado
+  const filteredPlayers = players.filter((player) =>
+    player.displayName?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  if (loading) return <p className="loading">Carregando jogadoras...</p>;
+
   return (
     <div className="players-list-container">
       <Navbar />
-      <h2>Ver Palpites de Outras Jogadoras</h2>
+
+      <header className="players-header">
+        <h2>Ver Palpites de Outras Jogadoras</h2>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por nome..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
+      </header>
+
       <div className="players-grid">
-        {players.length === 0 ? (
-          <p>Nenhuma jogadora encontrada.</p>
+        {filteredPlayers.length === 0 ? (
+          <p className="no-results">Nenhuma jogadora encontrada.</p>
         ) : (
-          players.map((player) => (
+          filteredPlayers.map((player) => (
+            /* Mantendo o botão e a navegação original */
             <button
               key={player.id}
-              className="player-card"
+              className="player-social-card"
               onClick={() => navigate(`/palpites/${player.id}`)}
             >
-              <img src={player.avatar} alt={player.displayName} />
-              <span>{player.displayName}</span>
+              <div className="avatar-wrapper">
+                <img src={player.avatar} alt={player.displayName} />
+              </div>
+              <div className="player-info">
+                <span className="player-name">{player.displayName}</span>
+                <span className="view-link">Ver histórico completo →</span>
+              </div>
             </button>
           ))
         )}

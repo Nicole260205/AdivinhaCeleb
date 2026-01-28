@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchCelebrities } from "../services/celebrity";
 import { fetchAllUserGuesses, deleteGuess } from "../services/guess";
@@ -12,6 +12,7 @@ function GuessHistory() {
   const [guesses, setGuesses] = useState([]);
   const [celebrities, setCelebrities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all"); // 'all', 'correct', 'incorrect', 'pending'
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -29,143 +30,153 @@ function GuessHistory() {
       }
     };
 
-    if (user) {
-      loadHistory();
-    }
+    if (user) loadHistory();
   }, [user]);
 
-  const getCelebrityById = (id) => {
-    return celebrities.find((c) => String(c.id) === String(id));
-  };
+  const getCelebrityById = (id) =>
+    celebrities.find((c) => String(c.id) === String(id));
+
+  // Lógica de Filtragem
+  const filteredGuesses = useMemo(() => {
+    return guesses.filter((guess) => {
+      const celeb = getCelebrityById(guess.celebrityId);
+      const isRevealed = celeb?.gender && celeb.gender !== "unknown";
+      const isCorrect = isRevealed && celeb.gender === guess.gender;
+
+      if (filter === "correct") return isCorrect;
+      if (filter === "incorrect") return isRevealed && !isCorrect;
+      if (filter === "pending") return !isRevealed;
+      return true;
+    });
+  }, [guesses, filter, celebrities]);
 
   const handleDeleteGuess = async (guessId) => {
-    const confirm = window.confirm(
-      "Tem certeza que deseja excluir este palpite?"
-    );
-    if (confirm) {
+    if (window.confirm("Deseja excluir este palpite?")) {
       try {
         await deleteGuess(guessId);
         setGuesses((prev) => prev.filter((g) => g.id !== guessId));
       } catch (error) {
-        alert("Erro ao excluir palpite.");
+        alert("Erro ao excluir.");
       }
     }
   };
 
-  // 🔹 Função para formatar data de forma segura
   const formatTimestamp = (timestamp) => {
-    if (!timestamp) return "Desconhecida";
-
-    if (timestamp instanceof Date) {
-      return timestamp.toLocaleDateString();
-    }
-
-    if (timestamp.toDate && typeof timestamp.toDate === "function") {
-      return timestamp.toDate().toLocaleDateString();
-    }
-
-    if (typeof timestamp === "number") {
-      return new Date(timestamp).toLocaleDateString();
-    }
-
-    if (timestamp.seconds && typeof timestamp.seconds === "number") {
-      return new Date(timestamp.seconds * 1000).toLocaleDateString();
-    }
-
-    return "Desconhecida";
+    if (!timestamp) return "---";
+    const date = timestamp.toDate
+      ? timestamp.toDate()
+      : new Date(timestamp.seconds * 1000 || timestamp);
+    return date.toLocaleDateString();
   };
 
-  if (loading) {
-    return <p className="loading">Carregando histórico...</p>;
-  }
+  if (loading) return <p className="loading">Carregando histórico...</p>;
 
   return (
     <div className="history-container">
       <Navbar />
-      <h1>Seu Histórico de Palpites</h1>
-      {guesses.length === 0 ? (
-        <div className="history-card">
-          <p>Você ainda não fez nenhum palpite.</p>
+
+      <header className="history-header">
+        <h1>Seu Histórico</h1>
+        <div className="filter-bar">
+          <button
+            className={filter === "all" ? "active" : ""}
+            onClick={() => setFilter("all")}
+          >
+            Todos
+          </button>
+          <button
+            className={filter === "correct" ? "active" : ""}
+            onClick={() => setFilter("correct")}
+          >
+            Acertos
+          </button>
+          <button
+            className={filter === "incorrect" ? "active" : ""}
+            onClick={() => setFilter("incorrect")}
+          >
+            Erros
+          </button>
+          <button
+            className={filter === "pending" ? "active" : ""}
+            onClick={() => setFilter("pending")}
+          >
+            Aguardando
+          </button>
         </div>
-      ) : (
-        <div className="history-list">
-          {guesses.map((guess) => {
+      </header>
+
+      <div className="history-list">
+        {filteredGuesses.length === 0 ? (
+          <div className="history-empty">
+            Nenhum palpite encontrado para este filtro.
+          </div>
+        ) : (
+          filteredGuesses.map((guess) => {
             const celeb = getCelebrityById(guess.celebrityId);
+            const isRevealed = celeb?.gender && celeb.gender !== "unknown";
+            const isCorrect = isRevealed && celeb.gender === guess.gender;
+
             return (
-              <div key={guess.id} className="history-card">
+              <div
+                key={guess.id}
+                className={`history-item ${isRevealed ? (isCorrect ? "item-correct" : "item-incorrect") : ""}`}
+              >
                 {celeb ? (
                   <>
                     <img
                       src={celeb.photo}
                       alt={celeb.name}
-                      className="history-img"
+                      className="history-thumb"
                     />
-                    <div className="history-info">
-                      <h3>{celeb.name}</h3>
-                      <p>
-                        Palpite:{" "}
-                        <strong>
-                          {guess.gender === "male" ? "Menino" : "Menina"}
-                        </strong>
-                      </p>
-                      <p>
-                        Resultado:{" "}
-                        <strong>
-                          {celeb.gender === "unknown" || !celeb.gender
-                            ? "Aguardando..."
-                            : celeb.gender === guess.gender
-                            ? "✔️ Acertou"
-                            : "❌ Errou"}
-                        </strong>
-                      </p>
-                      <p>
-                        Data do palpite:{" "}
-                        <strong>{formatTimestamp(guess.timestamp)}</strong>
-                      </p>
-
-                      {/* 🔒 Bloqueio de edição se o gênero já foi revelado */}
-                      <button
-                        className="history-button"
-                        onClick={() => navigate(`/guess/${celeb.id}`)}
-                        disabled={celeb.gender && celeb.gender !== "unknown"}
-                        style={{
-                          opacity:
-                            celeb.gender && celeb.gender !== "unknown"
-                              ? 0.6
-                              : 1,
-                          cursor:
-                            celeb.gender && celeb.gender !== "unknown"
-                              ? "not-allowed"
-                              : "pointer",
-                        }}
-                      >
-                        {celeb.gender && celeb.gender !== "unknown"
-                          ? "Palpite Revelado"
-                          : "Editar Palpite"}
-                      </button>
-
-                      {celeb.gender && celeb.gender !== "unknown" && (
-                        <p className="info-msg">
-                          O gênero já foi revelado. Edição desativada.
+                    <div className="history-content">
+                      <div className="history-top">
+                        <h3>{celeb.name}</h3>
+                        <span className="history-date">
+                          {formatTimestamp(guess.timestamp)}
+                        </span>
+                      </div>
+                      <div className="history-stats">
+                        <p>
+                          Votou:{" "}
+                          <strong>
+                            {guess.gender === "male" ? "Menino" : "Menina"}
+                          </strong>
                         </p>
-                      )}
-
-                      <button
-                        className="history-button"
-                        onClick={() => handleDeleteGuess(guess.id)}
-                      >
-                        Excluir Palpite
-                      </button>
+                        <p
+                          className={`status-text ${isRevealed ? (isCorrect ? "success" : "danger") : "waiting"}`}
+                        >
+                          {isRevealed
+                            ? isCorrect
+                              ? "✅ Acertou"
+                              : "❌ Errou"
+                            : "⏳ Pendente"}
+                        </p>
+                      </div>
+                      <div className="history-actions">
+                        <button
+                          className="btn-edit"
+                          onClick={() => navigate(`/guess/${celeb.id}`)}
+                          disabled={isRevealed}
+                        >
+                          {isRevealed ? "Revelado" : "Editar"}
+                        </button>
+                        <button
+                          className="btn-del"
+                          onClick={() => handleDeleteGuess(guess.id)}
+                        >
+                          Excluir
+                        </button>
+                      </div>
                     </div>
                   </>
                 ) : (
-                  <p>Dados da celebridade não encontrados.</p>
+                  <p>Dados incompletos.</p>
                 )}
               </div>
             );
-          })}
-        </div>
-      )}
+          })
+        )}
+      </div>
     </div>
   );
 }

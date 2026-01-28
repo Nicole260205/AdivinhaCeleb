@@ -22,13 +22,9 @@ function PlayerGuesses() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 🔹 Buscar informações do jogador
         const userSnap = await getDoc(doc(db, "users", id));
-        if (userSnap.exists()) {
-          setPlayer(userSnap.data());
-        }
+        if (userSnap.exists()) setPlayer(userSnap.data());
 
-        // 🔹 Buscar todas as celebridades
         const celebSnap = await getDocs(collection(db, "celebrities"));
         const celebMap = {};
         celebSnap.forEach((doc) => {
@@ -36,11 +32,10 @@ function PlayerGuesses() {
         });
         setCelebrities(celebMap);
 
-        // 🔹 Buscar palpites ordenados por data (mais recentes primeiro)
         const q = query(
           collection(db, "guesses"),
           where("userId", "==", id),
-          orderBy("timestamp", "desc")
+          orderBy("timestamp", "desc"),
         );
         const guessesSnap = await getDocs(q);
         const list = [];
@@ -49,12 +44,11 @@ function PlayerGuesses() {
         });
         setGuesses(list);
       } catch (error) {
-        console.error("Erro ao carregar palpites:", error);
+        console.error("Erro ao carregar:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [id]);
 
@@ -64,72 +58,75 @@ function PlayerGuesses() {
     return "—";
   };
 
-  if (loading) {
+  const formatarData = (ts) => {
+    if (!ts) return "—";
+    const date = ts.toDate ? ts.toDate() : new Date(ts.seconds * 1000 || ts);
+    return date.toLocaleDateString();
+  };
+
+  if (loading)
     return (
-      <div className="player-guesses-container">
+      <div className="loading-container">
         <Navbar />
         <p>Carregando palpites...</p>
       </div>
     );
-  }
 
   return (
     <div className="player-guesses-container">
       <Navbar />
-      <h2>Palpites de {player?.displayName || "Jogadora"}</h2>
-      {guesses.length === 0 ? (
-        <p>Esta jogadora ainda não fez palpites.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Celebridade</th>
-              <th>Palpite</th>
-              <th>Resultado</th>
-              <th>Data</th>
-            </tr>
-          </thead>
-          <tbody>
-            {guesses.map((guess, index) => {
-              const celeb = celebrities[guess.celebrityId];
-              const acertou =
-                celeb?.gender && celeb.gender !== "unknown"
-                  ? guess.gender === celeb.gender
-                  : null;
 
-              // 🔹 Formatar a data do palpite
-              let dataPalpite = "—";
-              const ts = guess.timestamp;
-              if (ts) {
-                if (ts.toDate) {
-                  dataPalpite = ts.toDate().toLocaleDateString();
-                } else if (ts.seconds) {
-                  dataPalpite = new Date(
-                    ts.seconds * 1000
-                  ).toLocaleDateString();
-                } else if (typeof ts === "number") {
-                  dataPalpite = new Date(ts).toLocaleDateString();
-                }
-              }
+      <header className="player-profile-header">
+        <img src={player?.avatar} alt="" className="player-avatar-large" />
+        <div className="player-meta">
+          <h2>Palpites de {player?.displayName || "Jogadora"}</h2>
+          <span>{guesses.length} palpites totais</span>
+        </div>
+      </header>
 
-              return (
-                <tr key={index}>
-                  <td data-label="Celebridade">{celeb?.name || "?"}</td>
-                  <td data-label="Palpite">{traduzirGenero(guess.gender)}</td>
-                  <td data-label="Resultado">
-                    {acertou === null
-                      ? "Ainda não revelado"
-                      : acertou
-                      ? "✅"
-                      : "❌"}
-                  </td>
-                  <td data-label="Data">{dataPalpite}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
+      <div className="guesses-social-grid">
+        {guesses.length === 0 ? (
+          <p className="no-guesses">Esta jogadora ainda não fez palpites.</p>
+        ) : (
+          guesses.map((guess, index) => {
+            const celeb = celebrities[guess.celebrityId];
+            const revelado = celeb?.gender && celeb.gender !== "unknown";
+            const acertou = revelado ? guess.gender === celeb.gender : null;
+
+            return (
+              <div
+                key={index}
+                className={`guess-social-card ${revelado ? (acertou ? "success" : "fail") : ""}`}
+              >
+                <div className="celeb-info-row">
+                  <img src={celeb?.photo} alt="" className="celeb-thumb" />
+                  <div className="celeb-name-date">
+                    <h3>{celeb?.name || "???"}</h3>
+                    <small>{formatarData(guess.timestamp)}</small>
+                  </div>
+                </div>
+
+                <div className="guess-result-row">
+                  <div className="guess-choice">
+                    <p>
+                      Votou: <strong>{traduzirGenero(guess.gender)}</strong>
+                    </p>
+                  </div>
+                  <div
+                    className={`status-badge ${revelado ? (acertou ? "win" : "loss") : "wait"}`}
+                  >
+                    {revelado
+                      ? acertou
+                        ? "Acertou ✅"
+                        : "Errou ❌"
+                      : "Aguardando ⏳"}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }
