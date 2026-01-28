@@ -669,7 +669,108 @@ h1 {
   color: #2a9d8f;
   font-weight: bold;
 }
+/* Container de feedback */
+.result-overlay {
+  margin-top: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+}
 
+/* Texto padrão para quando não houve palpite */
+.no-guess {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #666; /* Cor solicitada */
+  font-style: italic;
+}
+
+/* Estilo para quando acertou - Texto mais escuro para ler no branco */
+.text-success {
+  color: #245d32; /* Um verde bem escuro e legível */
+  background-color: #e6f4ea; 
+  border: 1px solid #c3e6cb;
+}
+
+/* Estilo para quando errou - Texto mais escuro para ler no branco */
+.text-danger {
+  color: #a52a2a; /* Um vermelho escuro/vinho para contraste */
+  background-color: #fce8e6;
+  border: 1px solid #fad2cf;
+}
+
+/* Caso o renderGender ou outros textos dentro do card ainda estejam brancos */
+.celebrity-card.revealed p, 
+.celebrity-card.revealed div {
+  color: #666; /* Garante que os textos do card revelado sigam o padrão */
+}
+
+/* Forçando a cor específica no texto de palpite errado caso necessário */
+.text-danger span, 
+.text-danger {
+  color: #a52a2a !important;
+}
+
+/* Badge de palpite no card */
+.guess-badge {
+  background: var(--dark-pink);
+  color: white;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+}
+
+/* Feedback de Acerto e Erro */
+.celebrity-card.correct { border: 2px solid #2a9d8f; }
+.celebrity-card.incorrect { border: 2px solid #e76f51; }
+
+.result-overlay {
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-top: 8px;
+}
+.text-success { color: #2a9d8f; }
+.text-danger { color: #e76f51; }
+
+/* Barra de Progresso */
+.progress-container {
+  margin-bottom: 2rem;
+  background: #f8f8f8;
+  padding: 15px;
+  border-radius: 12px;
+}
+.progress-container p{
+  color: #666;
+}
+.progress-bar-bg {
+  background: #ddd;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  background: var(--dark-pink);
+  height: 100%;
+  transition: width 0.5s ease-in-out;
+}
+
+/* Estilo do botão quando já votado */
+.btn-edit {
+  background-color: transparent;
+  color: var(--dark-pink);
+  border: 1px solid var(--dark-pink);
+  padding: 8px;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+}
 /* Admin form */
 .admin-guesses-table {
   width: 100%;
@@ -873,8 +974,6 @@ button:hover {
   font-size: 18px;
   margin-top: 50px;
 }
-
-
 
 /* Responsividade */
 @media (max-width: 768px) {
