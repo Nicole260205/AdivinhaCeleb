@@ -140,7 +140,7 @@ function Home() {
                       : `❌ Você votou ${renderGender(myGuess)}`}
                   </div>
                 ) : (
-                  <p className="no-guess">Você não palpitou</p>
+                  <p className="no-guess">Você não votou</p>
                 )}
               </div>
             );

@@ -28,7 +28,6 @@ function Ranking() {
   return (
     <div className="ranking-container">
       <Navbar />
-
       <header className="ranking-header">
         <h1>🏆 Ranking</h1>
       </header>
