@@ -47,7 +47,7 @@ function Guess() {
       setSuccessMessage("Palpite salvo com sucesso! 🎉");
       setTimeout(() => {
         setSuccessMessage("");
-        navigate("/");
+        navigate("/home");
       }, 2000);
     } catch (error) {
       console.error("Erro:", error);
